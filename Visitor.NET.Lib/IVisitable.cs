@@ -1,8 +1,16 @@
 namespace Visitor.NET.Lib
 {
-    public interface IVisitable<TVisitable>
-        where TVisitable : IVisitable<TVisitable>
+    public interface IVisitable{}
+    
+    public interface IVisitable<in TVisitor> : IVisitable
+        where TVisitor : IVisitor
     {
-        void Accept(IVisitor<TVisitable> visitor) => visitor.Visit(this);
+        void Accept(TVisitor visitor);
+    }
+    
+    public interface IVisitable<in TVisitor, out T> : IVisitable
+        where TVisitor : IVisitor
+    {
+        T Accept(TVisitor visitor);
     }
 }

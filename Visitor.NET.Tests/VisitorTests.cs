@@ -1,27 +1,43 @@
-using System;
 using NUnit.Framework;
-using Rhino.Mocks;
 using Visitor.NET.Lib;
 using Visitor.NET.Tests.VisitableStructures;
+using Visitor.NET.Tests.Visitors;
 
 namespace Visitor.NET.Tests;
 
 [TestFixture(Category = "Unit", TestOf = typeof(IVisitor<>))]
 public class VisitorTests
 {
-    [Test]
-    public void VisitorVisitDoesNotThrow()
+    private IVisitable _visitable;
+
+    [SetUp]
+    public void SetUp()
     {
-        IVisitable<Node> linkedList = new Node(1,
-            new Node(2,
-                new Node(0, null)
+        _visitable = new Operation('+',
+            new Number(1),
+            new Parenthesis(
+                new Operation('+',
+                    new Number(2),
+                    new Number(3)
+                )
             )
         );
-        var visitor = MockRepository.GenerateMock<IVisitor<Node>>();
-        
-        visitor.Stub(x => x.Visit(Arg<Node>.Is.Anything))
-            .Do((Action<Node>)(_ => { }));
+    }
+    
+    [Test]
+    public void VisitorVisitsCorrectly()
+    {
+        var binaryTree = (IVisitable<BinaryTreeNodeVisitor>)_visitable;
+        var visitor = new BinaryTreeNodeVisitor();
+        binaryTree.Accept(visitor);
+        Assert.AreEqual("1+(2+3)", visitor.ToString());
+    }
 
-        Assert.DoesNotThrow(() => linkedList.Accept(visitor));
+    [Test]
+    public void EvaluatorComputesCorrectly()
+    {
+        var binaryTree = (IVisitable<BinaryTreeEvaluator, double>)_visitable;
+        var visitor = new BinaryTreeEvaluator();
+        Assert.AreEqual(6, binaryTree.Accept(visitor));
     }
 }
