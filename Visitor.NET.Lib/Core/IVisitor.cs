@@ -1,4 +1,4 @@
-namespace Visitor.NET.Lib
+namespace Visitor.NET.Lib.Core
 {
     public interface IVisitor{}
 
