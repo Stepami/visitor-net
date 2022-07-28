@@ -1,6 +1,21 @@
+Status:
+
+[![NuGet](https://img.shields.io/nuget/dt/Visitor.NET.svg)](https://www.nuget.org/packages/Visitor.NET/)
+
 # Visitor.NET
 
 With Visitor.NET you can develop typesafe acyclic visitors even if you do not have access to source code of visitable structures.
+
+## Installation
+
+### NuGet
+
+Install package : [https://www.nuget.org/packages/Visitor.NET](https://www.nuget.org/packages/Visitor.NET).
+
+### GitHub
+
+- Clone locally this github repository
+- Build the `Visitor.NET.sln` solution
 
 ## Usage
 
