@@ -1,5 +1,5 @@
 using NUnit.Framework;
-using Visitor.NET.Lib.Adapters;
+using Visitor.NET.Lib.Adapter;
 using Visitor.NET.Lib.Core;
 using Visitor.NET.Tests.VisitableAdapters;
 using Visitor.NET.Tests.Visitors;

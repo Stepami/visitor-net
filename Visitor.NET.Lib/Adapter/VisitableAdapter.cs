@@ -1,6 +1,6 @@
 using Visitor.NET.Lib.Core;
 
-namespace Visitor.NET.Lib.Adapters
+namespace Visitor.NET.Lib.Adapter
 {
     public abstract class VisitableAdapter<TData, TVisitor, TReturn> : IVisitable<TVisitor, TReturn>
         where TVisitor : IVisitor
