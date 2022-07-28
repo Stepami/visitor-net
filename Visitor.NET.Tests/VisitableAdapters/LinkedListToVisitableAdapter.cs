@@ -1,21 +1,22 @@
 using Visitor.NET.Lib.Adapters;
+using Visitor.NET.Lib.Core;
 using Visitor.NET.Tests.Visitors;
 
 namespace Visitor.NET.Tests.VisitableAdapters;
 
 public class LinkedListToVisitableAdapter<T> : 
-    VisitableAdapter<LinkedListNode<T>, LinkedListNodePrinter<T>>
+    VisitableAdapter<LinkedListNode<T>, LinkedListNodePrinter<T>, Unit>
 {
     public LinkedListToVisitableAdapter(LinkedListNode<T> data) : base(data)
     {
     }
 
-    public override void Accept(LinkedListNodePrinter<T> visitor) => 
+    public override Unit Accept(LinkedListNodePrinter<T> visitor) =>
         visitor.Visit(this);
 }
 
 public class LinkedListToVisitableAdapterFactory<T> :
-    VisitableAdapterFactory<LinkedListNode<T>, LinkedListNodePrinter<T>>
+    VisitableAdapterFactory<LinkedListNode<T>, LinkedListNodePrinter<T>, Unit>
 {
     public override LinkedListToVisitableAdapter<T> Create(LinkedListNode<T> data) =>
         new(data);

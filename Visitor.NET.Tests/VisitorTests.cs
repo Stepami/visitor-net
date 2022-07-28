@@ -5,7 +5,7 @@ using Visitor.NET.Tests.Visitors;
 
 namespace Visitor.NET.Tests;
 
-[TestFixture(Category = "Unit", TestOf = typeof(IVisitor<>))]
+[TestFixture(Category = "Unit", TestOf = typeof(IVisitor<,>))]
 public class VisitorTests
 {
     private IVisitable _visitable;
@@ -27,7 +27,7 @@ public class VisitorTests
     [Test]
     public void VisitorVisitsCorrectly()
     {
-        var binaryTree = (IVisitable<BinaryTreeNodeVisitor>)_visitable;
+        var binaryTree = (IVisitable<BinaryTreeNodeVisitor, Unit>)_visitable;
         var visitor = new BinaryTreeNodeVisitor();
         binaryTree.Accept(visitor);
         Assert.AreEqual("1+(2+3)", visitor.ToString());
