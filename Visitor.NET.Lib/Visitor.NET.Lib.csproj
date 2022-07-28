@@ -11,6 +11,7 @@
         <RepositoryUrl>https://github.com/Stepami/visitor-net</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
         <PackageProjectUrl>https://github.com/Stepami/visitor-net</PackageProjectUrl>
+        <Title>Visitor.NET</Title>
     </PropertyGroup>
 
 </Project>
