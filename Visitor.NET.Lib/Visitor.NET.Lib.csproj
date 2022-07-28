@@ -16,4 +16,12 @@
         <PackageTags>Visitor Pattern Contracts</PackageTags>
     </PropertyGroup>
 
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+      <DocumentationFile>bin\Debug\netstandard2.1\Visitor.NET.Lib.xml</DocumentationFile>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+      <DocumentationFile>bin\Release\netstandard2.1\Visitor.NET.Lib.xml</DocumentationFile>
+    </PropertyGroup>
+
 </Project>
