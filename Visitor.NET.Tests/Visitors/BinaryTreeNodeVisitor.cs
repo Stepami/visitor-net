@@ -1,5 +1,4 @@
 using System.Text;
-using Visitor.NET.Lib;
 using Visitor.NET.Lib.Core;
 using Visitor.NET.Tests.VisitableStructures;
 
