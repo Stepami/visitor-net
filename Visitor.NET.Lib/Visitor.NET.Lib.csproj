@@ -12,6 +12,8 @@
         <RepositoryType>git</RepositoryType>
         <PackageProjectUrl>https://github.com/Stepami/visitor-net</PackageProjectUrl>
         <Title>Visitor.NET</Title>
+        <PackageLicenseUrl>https://github.com/Stepami/visitor-net/blob/master/LICENCE</PackageLicenseUrl>
+        <PackageTags>Visitor Pattern Contracts</PackageTags>
     </PropertyGroup>
 
 </Project>
