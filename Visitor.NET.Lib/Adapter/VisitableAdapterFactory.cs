@@ -18,4 +18,13 @@ namespace Visitor.NET.Lib.Adapter
         /// <returns>Visitable wrapper of data</returns>
         public abstract VisitableAdapter<TData, TVisitor, TReturn> Create(TData data);
     }
+
+    /// <inheritdoc />
+    public abstract class VisitableAdapterFactory<TData, TVisitor> :
+        VisitableAdapterFactory<TData, TVisitor, Unit>
+        where TVisitor : IVisitor
+    {
+        /// <inheritdoc />
+        public abstract override VisitableAdapter<TData, TVisitor> Create(TData data);
+    }
 }

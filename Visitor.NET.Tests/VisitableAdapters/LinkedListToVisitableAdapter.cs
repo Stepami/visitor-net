@@ -5,7 +5,7 @@ using Visitor.NET.Tests.Visitors;
 namespace Visitor.NET.Tests.VisitableAdapters;
 
 public class LinkedListToVisitableAdapter<T> : 
-    VisitableAdapter<LinkedListNode<T>, LinkedListNodePrinter<T>, Unit>
+    VisitableAdapter<LinkedListNode<T>, LinkedListNodePrinter<T>>
 {
     public LinkedListToVisitableAdapter(LinkedListNode<T> data) : base(data)
     {
@@ -16,7 +16,7 @@ public class LinkedListToVisitableAdapter<T> :
 }
 
 public class LinkedListToVisitableAdapterFactory<T> :
-    VisitableAdapterFactory<LinkedListNode<T>, LinkedListNodePrinter<T>, Unit>
+    VisitableAdapterFactory<LinkedListNode<T>, LinkedListNodePrinter<T>>
 {
     public override LinkedListToVisitableAdapter<T> Create(LinkedListNode<T> data) =>
         new(data);

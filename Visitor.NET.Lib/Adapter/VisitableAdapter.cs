@@ -20,4 +20,15 @@ namespace Visitor.NET.Lib.Adapter
         /// <inheritdoc cref="IVisitable{TVisitor,T}.Accept"/>
         public abstract TReturn Accept(TVisitor visitor);
     }
+
+    /// <inheritdoc cref="Visitor.NET.Lib.Adapter.VisitableAdapter{TData,TVisitor,TReturn}" />
+    public abstract class VisitableAdapter<TData, TVisitor> :
+        VisitableAdapter<TData, TVisitor, Unit>, IVisitable<TVisitor>
+        where TVisitor : IVisitor
+    {
+        /// <inheritdoc />
+        protected VisitableAdapter(TData data) : base(data)
+        {
+        }
+    }
 }

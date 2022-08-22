@@ -96,7 +96,7 @@ In case you would make `Visit` implementation procedure (i.e. have no returning 
 So, your method would look like this:
 
 ```csharp
-public class SomeVisitor : IVisitor<Some, Unit>
+public class SomeVisitor : IVisitor<Some>
 {
     public Unit Visit(Some visitable)
     {
@@ -120,7 +120,7 @@ So we may define wrapper around instance of this type which would [became visita
 
 ```csharp
 public class LinkedListToVisitableAdapter<T> : 
-    VisitableAdapter<LinkedListNode<T>, LinkedListNodePrinter<T>, Unit>
+    VisitableAdapter<LinkedListNode<T>, LinkedListNodePrinter<T>>
 {
     public LinkedListToVisitableAdapter(LinkedListNode<T> data) : base(data)
     {
@@ -135,7 +135,7 @@ This adapter can be instantiated with [`VisitableAdapterFactory<,,>`](Visitor.NE
 
 ```csharp
 public class LinkedListToVisitableAdapterFactory<T> :
-    VisitableAdapterFactory<LinkedListNode<T>, LinkedListNodePrinter<T>, Unit>
+    VisitableAdapterFactory<LinkedListNode<T>, LinkedListNodePrinter<T>>
 {
     public override LinkedListToVisitableAdapter<T> Create(LinkedListNode<T> data) =>
         new(data);
@@ -145,12 +145,12 @@ public class LinkedListToVisitableAdapterFactory<T> :
 Bringing it all together:
 
 ```csharp
-public class LinkedListNodePrinter<T> : IVisitor<LinkedListToVisitableAdapter<T>, Unit>
+public class LinkedListNodePrinter<T> : IVisitor<LinkedListToVisitableAdapter<T>>
 {
     private readonly StringBuilder _sb = new();
-    private readonly VisitableAdapterFactory<LinkedListNode<T>, LinkedListNodePrinter<T>, Unit> _factory;
+    private readonly VisitableAdapterFactory<LinkedListNode<T>, LinkedListNodePrinter<T>> _factory;
 
-    public LinkedListNodePrinter(VisitableAdapterFactory<LinkedListNode<T>, LinkedListNodePrinter<T>, Unit> factory)
+    public LinkedListNodePrinter(VisitableAdapterFactory<LinkedListNode<T>, LinkedListNodePrinter<T>> factory)
     {
         _factory = factory;
     }

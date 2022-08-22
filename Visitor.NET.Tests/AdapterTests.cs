@@ -18,10 +18,10 @@ public class AdapterTests
             )
         );
 
-        VisitableAdapterFactory<LinkedListNode<int>, LinkedListNodePrinter<int>, Unit> factory =
+        VisitableAdapterFactory<LinkedListNode<int>, LinkedListNodePrinter<int>> factory =
             new LinkedListToVisitableAdapterFactory<int>();
 
-        IVisitable<LinkedListNodePrinter<int>, Unit> rootVisitable = factory.Create(linkedList);
+        IVisitable<LinkedListNodePrinter<int>> rootVisitable = factory.Create(linkedList);
         var visitor = new LinkedListNodePrinter<int>(factory);
         
         rootVisitable.Accept(visitor);

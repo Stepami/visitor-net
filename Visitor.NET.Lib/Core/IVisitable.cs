@@ -14,4 +14,11 @@ namespace Visitor.NET.Lib.Core
         /// <returns><code>visitor.Visit(this)</code></returns>
         T Accept(TVisitor visitor);
     }
+
+    /// <inheritdoc />
+    public interface IVisitable<in TVisitor> :
+        IVisitable<TVisitor, Unit>
+        where TVisitor : IVisitor
+    {
+    }
 }

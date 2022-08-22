@@ -5,9 +5,9 @@ using Visitor.NET.Tests.VisitableStructures;
 namespace Visitor.NET.Tests.Visitors;
 
 public class BinaryTreeNodeVisitor : 
-    IVisitor<Operation, Unit>, 
-    IVisitor<Number, Unit>,
-    IVisitor<Parenthesis, Unit>
+    IVisitor<Operation>, 
+    IVisitor<Number>,
+    IVisitor<Parenthesis>
 {
     private readonly StringBuilder _sb = new ();
     
