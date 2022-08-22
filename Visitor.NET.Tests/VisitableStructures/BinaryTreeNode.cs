@@ -4,7 +4,7 @@ using Visitor.NET.Tests.Visitors;
 namespace Visitor.NET.Tests.VisitableStructures;
 
 public abstract record BinaryTreeNode : 
-    IVisitable<BinaryTreeNodeVisitor, Unit>,
+    IVisitable<BinaryTreeNodeVisitor>,
     IVisitable<BinaryTreeEvaluator, double>
 {
     public abstract Unit Accept(BinaryTreeNodeVisitor visitor);

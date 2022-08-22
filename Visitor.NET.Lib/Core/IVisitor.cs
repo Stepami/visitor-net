@@ -18,4 +18,11 @@ namespace Visitor.NET.Lib.Core
         /// <returns>Product of visiting</returns>
         T Visit(TVisitable visitable);
     }
+
+    /// <inheritdoc />
+    public interface IVisitor<in TVisitable> :
+        IVisitor<TVisitable, Unit>
+        where TVisitable : IVisitable
+    {
+    }
 }

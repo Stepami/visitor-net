@@ -27,7 +27,7 @@ public class VisitorTests
     [Test]
     public void VisitorVisitsCorrectly()
     {
-        var binaryTree = (IVisitable<BinaryTreeNodeVisitor, Unit>)_visitable;
+        var binaryTree = (IVisitable<BinaryTreeNodeVisitor>)_visitable;
         var visitor = new BinaryTreeNodeVisitor();
         binaryTree.Accept(visitor);
         Assert.AreEqual("1+(2+3)", visitor.ToString());

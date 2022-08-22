@@ -5,12 +5,12 @@ using Visitor.NET.Tests.VisitableAdapters;
 
 namespace Visitor.NET.Tests.Visitors;
 
-public class LinkedListNodePrinter<T> : IVisitor<LinkedListToVisitableAdapter<T>, Unit>
+public class LinkedListNodePrinter<T> : IVisitor<LinkedListToVisitableAdapter<T>>
 {
     private readonly StringBuilder _sb = new();
-    private readonly VisitableAdapterFactory<LinkedListNode<T>, LinkedListNodePrinter<T>, Unit> _factory;
+    private readonly VisitableAdapterFactory<LinkedListNode<T>, LinkedListNodePrinter<T>> _factory;
 
-    public LinkedListNodePrinter(VisitableAdapterFactory<LinkedListNode<T>, LinkedListNodePrinter<T>, Unit> factory)
+    public LinkedListNodePrinter(VisitableAdapterFactory<LinkedListNode<T>, LinkedListNodePrinter<T>> factory)
     {
         _factory = factory;
     }
