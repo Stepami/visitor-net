@@ -34,7 +34,7 @@ public record Parenthesis(BinaryTreeNode Node) : BinaryTreeNode;
 ```
 So we may want to traverse it in order to, for example, compute expression result.
 
-First of all, we implement evaluator using [`IVisitor<,>`](Visitor.NET.Lib/Core/IVisitor.cs) interface:
+First of all, we implement evaluator using [`IVisitor<,>`](Visitor.NET/IVisitor.cs) interface:
 
 ```csharp
 public class BinaryTreeEvaluator :
@@ -57,7 +57,7 @@ public class BinaryTreeEvaluator :
 
 But then we have to tell structures we visit that they are visitable.
 
-It is done through [`IVisitable<,>`](Visitor.NET.Lib/Core/IVisitable.cs) interface implementation:
+It is done through [`IVisitable<,>`](Visitor.NET/IVisitable.cs) interface implementation:
 
 ```csharp
 public abstract record BinaryTreeNode : 
@@ -116,7 +116,7 @@ public record LinkedListNode<T>(T Data, LinkedListNode<T> Next)
 }
 ```
 
-So we may define wrapper around instance of this type which would [became visitable](Visitor.NET.Lib/Adapter/VisitableAdapter.cs):
+So we may define wrapper around instance of this type which would [became visitable](Visitor.NET/Adapter/VisitableAdapter.cs):
 
 ```csharp
 public class LinkedListToVisitableAdapter<T> : 
@@ -131,7 +131,7 @@ public class LinkedListToVisitableAdapter<T> :
 }
 ```
 
-This adapter can be instantiated with [`VisitableAdapterFactory<,,>`](Visitor.NET.Lib/Adapter/VisitableAdapterFactory.cs) implementation:
+This adapter can be instantiated with [`VisitableAdapterFactory<,,>`](Visitor.NET/Adapter/VisitableAdapterFactory.cs) implementation:
 
 ```csharp
 public class LinkedListToVisitableAdapterFactory<T> :
