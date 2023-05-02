@@ -1,6 +1,4 @@
-using Visitor.NET.Lib.Core;
-
-namespace Visitor.NET.Lib.Adapter
+namespace Visitor.NET.Adapter
 {
     /// <summary>Adapter factory contract</summary>
     /// <typeparam name="TData">Type wrapped with adapter</typeparam>

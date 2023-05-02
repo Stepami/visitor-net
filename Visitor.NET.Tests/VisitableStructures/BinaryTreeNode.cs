@@ -1,4 +1,3 @@
-using Visitor.NET.Lib.Core;
 using Visitor.NET.Tests.Visitors;
 
 namespace Visitor.NET.Tests.VisitableStructures;
