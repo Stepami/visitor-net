@@ -1,11 +1,11 @@
 using System;
 
-namespace Visitor.NET.Lib.Core
+namespace Visitor.NET
 {
     /// <summary>https://en.wikipedia.org/wiki/Unit_type</summary>
     public readonly struct Unit : IEquatable<Unit>, IComparable<Unit>
     {
-        /// <inheritdoc cref="IEquatable{T}.Equals(T?)"/>
+        /// <inheritdoc cref="IEquatable{T}.Equals(T)"/>
         public bool Equals(Unit other) => true;
 
         /// <inheritdoc cref="IComparable{T}.CompareTo"/>

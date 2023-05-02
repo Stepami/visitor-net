@@ -1,6 +1,5 @@
 using System.Text;
-using Visitor.NET.Lib.Adapter;
-using Visitor.NET.Lib.Core;
+using Visitor.NET.Adapter;
 using Visitor.NET.Tests.VisitableAdapters;
 
 namespace Visitor.NET.Tests.Visitors;

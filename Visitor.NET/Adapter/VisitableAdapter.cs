@@ -1,6 +1,4 @@
-using Visitor.NET.Lib.Core;
-
-namespace Visitor.NET.Lib.Adapter
+namespace Visitor.NET.Adapter
 {
     /// <summary>Wrapper around the data not implementing <see cref="IVisitable{TVisitor,T}"/></summary>
     /// <typeparam name="TData">Type of wrapped data</typeparam>
@@ -21,7 +19,7 @@ namespace Visitor.NET.Lib.Adapter
         public abstract TReturn Accept(TVisitor visitor);
     }
 
-    /// <inheritdoc cref="Visitor.NET.Lib.Adapter.VisitableAdapter{TData,TVisitor,TReturn}" />
+    /// <inheritdoc cref="VisitableAdapter{TData,TVisitor,TReturn}" />
     public abstract class VisitableAdapter<TData, TVisitor> :
         VisitableAdapter<TData, TVisitor, Unit>, IVisitable<TVisitor>
         where TVisitor : IVisitor

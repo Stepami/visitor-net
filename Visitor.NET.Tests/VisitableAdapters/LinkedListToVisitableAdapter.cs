@@ -1,5 +1,4 @@
-using Visitor.NET.Lib.Adapter;
-using Visitor.NET.Lib.Core;
+using Visitor.NET.Adapter;
 using Visitor.NET.Tests.Visitors;
 
 namespace Visitor.NET.Tests.VisitableAdapters;

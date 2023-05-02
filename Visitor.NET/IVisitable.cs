@@ -1,4 +1,4 @@
-namespace Visitor.NET.Lib.Core
+namespace Visitor.NET
 {
     /// <summary>Marker interface of a visitable entity</summary>
     public interface IVisitable{}
