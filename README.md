@@ -17,6 +17,10 @@ Install package : [https://www.nuget.org/packages/Visitor.NET](https://www.nuget
 - Clone locally this github repository
 - Build the `Visitor.NET.sln` solution
 
+## Projects using Visitor.NET
+
+- [HydraScript](https://github.com/Stepami/extended-js-subset)
+
 ## Usage
 
 ### Basic Example
