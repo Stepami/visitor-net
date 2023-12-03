@@ -19,7 +19,7 @@ public abstract class VisitableAdapterFactory<TData, TVisitor, TReturn>
 
 /// <inheritdoc />
 public abstract class VisitableAdapterFactory<TData, TVisitor> :
-    VisitableAdapterFactory<TData, TVisitor, Unit>
+    VisitableAdapterFactory<TData, TVisitor, VisitUnit>
     where TVisitor : IVisitor
 {
     /// <inheritdoc />

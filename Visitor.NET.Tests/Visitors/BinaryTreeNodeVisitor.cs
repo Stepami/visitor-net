@@ -10,7 +10,7 @@ public class BinaryTreeNodeVisitor :
 {
     private readonly StringBuilder _sb = new ();
     
-    public Unit Visit(Operation visitable)
+    public VisitUnit Visit(Operation visitable)
     {
         visitable.Left.Accept(this);
         _sb.Append(visitable.Symbol);
@@ -18,13 +18,13 @@ public class BinaryTreeNodeVisitor :
         return default;
     }
 
-    public Unit Visit(Number visitable)
+    public VisitUnit Visit(Number visitable)
     {
         _sb.Append(visitable.Value);
         return default;
     }
 
-    public Unit Visit(Parenthesis visitable)
+    public VisitUnit Visit(Parenthesis visitable)
     {
         _sb.Append('(');
         visitable.Node.Accept(this);

@@ -14,7 +14,7 @@ public class LinkedListNodePrinter<T> : IVisitor<LinkedListToVisitableAdapter<T>
         _factory = factory;
     }
 
-    public Unit Visit(LinkedListToVisitableAdapter<T> visitable)
+    public VisitUnit Visit(LinkedListToVisitableAdapter<T> visitable)
     {
         var node = visitable.Data;
         _sb.Append(node.Data);

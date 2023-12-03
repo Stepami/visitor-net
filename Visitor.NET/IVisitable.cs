@@ -5,7 +5,7 @@ public interface IVisitable{}
     
 /// <summary>Contract of visitable type</summary>
 /// <typeparam name="TVisitor">What it is visited with</typeparam>
-/// <typeparam name="T">Type visitor returns. If no return value supposed use <see cref="Unit"/></typeparam>
+/// <typeparam name="T">Type visitor returns. If no return value supposed use <see cref="VisitUnit"/></typeparam>
 public interface IVisitable<in TVisitor, out T> : IVisitable
     where TVisitor : IVisitor
 {
@@ -17,7 +17,7 @@ public interface IVisitable<in TVisitor, out T> : IVisitable
 
 /// <inheritdoc />
 public interface IVisitable<in TVisitor> :
-    IVisitable<TVisitor, Unit>
+    IVisitable<TVisitor, VisitUnit>
     where TVisitor : IVisitor
 {
 }

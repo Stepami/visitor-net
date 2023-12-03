@@ -21,7 +21,7 @@ public abstract class VisitableAdapter<TData, TVisitor, TReturn> :
 
 /// <inheritdoc cref="VisitableAdapter{TData,TVisitor,TReturn}" />
 public abstract class VisitableAdapter<TData, TVisitor> :
-    VisitableAdapter<TData, TVisitor, Unit>, IVisitable<TVisitor>
+    VisitableAdapter<TData, TVisitor, VisitUnit>, IVisitable<TVisitor>
     where TVisitor : IVisitor
 {
     /// <inheritdoc />

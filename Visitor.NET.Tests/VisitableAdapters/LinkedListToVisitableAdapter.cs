@@ -10,7 +10,7 @@ public class LinkedListToVisitableAdapter<T> :
     {
     }
 
-    public override Unit Accept(LinkedListNodePrinter<T> visitor) =>
+    public override VisitUnit Accept(LinkedListNodePrinter<T> visitor) =>
         visitor.Visit(this);
 }
 
