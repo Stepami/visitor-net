@@ -2,10 +2,7 @@ namespace Visitor.NET.Adapter;
 
 /// <summary>Adapter factory contract</summary>
 /// <typeparam name="TData">Type wrapped with adapter</typeparam>
-/// <typeparam name="TVisitor">Visitor type</typeparam>
-/// <typeparam name="TReturn">Return type of a visitor</typeparam>
-public abstract class VisitableAdapterFactory<TData, TVisitor, TReturn>
-    where TVisitor : IVisitor
+public abstract class VisitableAdapterFactory<TData>
 {
     /// <summary>
     /// Factory method.
@@ -14,14 +11,5 @@ public abstract class VisitableAdapterFactory<TData, TVisitor, TReturn>
     /// </summary>
     /// <param name="data">Data needs to be visitable</param>
     /// <returns>Visitable wrapper of data</returns>
-    public abstract VisitableAdapter<TData, TVisitor, TReturn> Create(TData data);
-}
-
-/// <inheritdoc />
-public abstract class VisitableAdapterFactory<TData, TVisitor> :
-    VisitableAdapterFactory<TData, TVisitor, VisitUnit>
-    where TVisitor : IVisitor
-{
-    /// <inheritdoc />
-    public abstract override VisitableAdapter<TData, TVisitor> Create(TData data);
+    public abstract VisitableAdapter<TData> Create(TData data);
 }

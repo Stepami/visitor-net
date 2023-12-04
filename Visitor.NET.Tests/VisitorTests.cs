@@ -26,17 +26,15 @@ public class VisitorTests
     [Test]
     public void VisitorVisitsCorrectly()
     {
-        var binaryTree = (IVisitable<BinaryTreeNodeVisitor>)_visitable;
         var visitor = new BinaryTreeNodeVisitor();
-        binaryTree.Accept(visitor);
+        _visitable.Accept(visitor);
         Assert.AreEqual("1+(2+3)", visitor.ToString());
     }
 
     [Test]
     public void EvaluatorComputesCorrectly()
     {
-        var binaryTree = (IVisitable<BinaryTreeEvaluator, double>)_visitable;
         var visitor = new BinaryTreeEvaluator();
-        Assert.AreEqual(6, binaryTree.Accept(visitor));
+        Assert.AreEqual(6, _visitable.Accept(visitor));
     }
 }

@@ -1,12 +1,13 @@
 namespace Visitor.NET;
 
 /// <summary>Marker interface of a visitor entity</summary>
-public interface IVisitor{}
+// ReSharper disable once UnusedTypeParameter
+public interface IVisitor<out T>{}
     
 /// <summary>Contract of visitor type</summary>
 /// <typeparam name="TVisitable">What we visit</typeparam>
-/// <typeparam name="T">What we return after visiting. If no return value supposed use <see cref="VisitUnit"/></typeparam>
-public interface IVisitor<in TVisitable, out T> : IVisitor
+/// <typeparam name="TReturn">What we return after visiting. If no return value supposed use <see cref="VisitUnit"/></typeparam>
+public interface IVisitor<in TVisitable, out TReturn> : IVisitor<TReturn>
     where TVisitable : IVisitable
 {
     /// <summary>
@@ -16,12 +17,5 @@ public interface IVisitor<in TVisitable, out T> : IVisitor
     /// </summary>
     /// <param name="visitable">An entity we visit</param>
     /// <returns>Product of visiting</returns>
-    T Visit(TVisitable visitable);
-}
-
-/// <inheritdoc />
-public interface IVisitor<in TVisitable> :
-    IVisitor<TVisitable, VisitUnit>
-    where TVisitable : IVisitable
-{
+    TReturn Visit(TVisitable visitable);
 }

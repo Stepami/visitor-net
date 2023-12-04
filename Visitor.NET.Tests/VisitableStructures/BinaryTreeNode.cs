@@ -1,39 +1,38 @@
-using Visitor.NET.Tests.Visitors;
+using System;
 
 namespace Visitor.NET.Tests.VisitableStructures;
 
-public abstract record BinaryTreeNode : 
-    IVisitable<BinaryTreeNodeVisitor>,
-    IVisitable<BinaryTreeEvaluator, double>
+public abstract record BinaryTreeNode : IVisitable
 {
-    public abstract VisitUnit Accept(BinaryTreeNodeVisitor visitor);
-    
-    public abstract double Accept(BinaryTreeEvaluator visitor);
+    public abstract TReturn Accept<TReturn>(IVisitor<TReturn> visitor);
 }
 
 public record Operation(char Symbol, BinaryTreeNode Left, BinaryTreeNode Right) : BinaryTreeNode
 {
-    public override VisitUnit Accept(BinaryTreeNodeVisitor visitor) =>
-        visitor.Visit(this);
-    
-    public override double Accept(BinaryTreeEvaluator visitor) =>
-        visitor.Visit(this);
+    public override TReturn Accept<TReturn>(IVisitor<TReturn> visitor)
+    {
+        if (visitor is IVisitor<Operation, TReturn> concreteVisitor)
+            return concreteVisitor.Visit(this);
+        throw new NotSupportedException();
+    }
 }
 
 public record Number(double Value) : BinaryTreeNode
 {
-    public override VisitUnit Accept(BinaryTreeNodeVisitor visitor) =>
-        visitor.Visit(this);
-    
-    public override double Accept(BinaryTreeEvaluator visitor) =>
-        visitor.Visit(this);
+    public override TReturn Accept<TReturn>(IVisitor<TReturn> visitor)
+    {
+        if (visitor is IVisitor<Number, TReturn> concreteVisitor)
+            return concreteVisitor.Visit(this);
+        throw new NotSupportedException();
+    }
 }
 
 public record Parenthesis(BinaryTreeNode Node) : BinaryTreeNode
 {
-    public override VisitUnit Accept(BinaryTreeNodeVisitor visitor) =>
-        visitor.Visit(this);
-    
-    public override double Accept(BinaryTreeEvaluator visitor) =>
-        visitor.Visit(this);
+    public override TReturn Accept<TReturn>(IVisitor<TReturn> visitor)
+    {
+        if (visitor is IVisitor<Parenthesis, TReturn> concreteVisitor)
+            return concreteVisitor.Visit(this);
+        throw new NotSupportedException();
+    }
 }
