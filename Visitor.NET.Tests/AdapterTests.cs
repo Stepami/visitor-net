@@ -20,11 +20,12 @@ public class AdapterTests
         VisitableAdapterFactory<LinkedListNode<int>> factory =
             new LinkedListToVisitableAdapterFactory<int>();
 
-        IVisitable rootVisitable = factory.Create(linkedList);
-        var visitor = new LinkedListNodePrinter<int>(factory);
-        
+        var rootVisitable = factory.Create(linkedList);
+        IVisitor<VisitableAdapter<LinkedListNode<int>>, VisitUnit> visitor =
+            new LinkedListNodePrinter<int>(factory);
+
         rootVisitable.Accept(visitor);
-        
+
         Assert.AreEqual("3->1->7", visitor.ToString());
     }
 }

@@ -3,18 +3,18 @@ using Visitor.NET.Tests.VisitableStructures;
 
 namespace Visitor.NET.Tests.Visitors;
 
-public class BinaryTreeNodeVisitor : 
-    IVisitor<Operation, VisitUnit>, 
+public class BinaryTreeNodeVisitor : VisitorBase<BinaryTreeNode, VisitUnit>,
+    IVisitor<Operation, VisitUnit>,
     IVisitor<Number, VisitUnit>,
     IVisitor<Parenthesis, VisitUnit>
 {
-    private readonly StringBuilder _sb = new ();
-    
+    private readonly StringBuilder _sb = new();
+
     public VisitUnit Visit(Operation visitable)
     {
-        visitable.Left.Accept(this);
+        visitable.Left.Accept(This);
         _sb.Append(visitable.Symbol);
-        visitable.Right.Accept(this);
+        visitable.Right.Accept(This);
         return default;
     }
 
@@ -27,7 +27,7 @@ public class BinaryTreeNodeVisitor :
     public VisitUnit Visit(Parenthesis visitable)
     {
         _sb.Append('(');
-        visitable.Node.Accept(this);
+        visitable.Node.Accept(This);
         _sb.Append(')');
         return default;
     }

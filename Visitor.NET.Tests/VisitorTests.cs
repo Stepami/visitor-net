@@ -7,7 +7,7 @@ namespace Visitor.NET.Tests;
 [TestFixture(Category = "Unit", TestOf = typeof(IVisitor<,>))]
 public class VisitorTests
 {
-    private IVisitable _visitable;
+    private BinaryTreeNode _visitable;
 
     [SetUp]
     public void SetUp()
@@ -22,11 +22,11 @@ public class VisitorTests
             )
         );
     }
-    
+
     [Test]
     public void VisitorVisitsCorrectly()
     {
-        var visitor = new BinaryTreeNodeVisitor();
+        IVisitor<BinaryTreeNode, VisitUnit> visitor = new BinaryTreeNodeVisitor();
         _visitable.Accept(visitor);
         Assert.AreEqual("1+(2+3)", visitor.ToString());
     }
@@ -34,7 +34,7 @@ public class VisitorTests
     [Test]
     public void EvaluatorComputesCorrectly()
     {
-        var visitor = new BinaryTreeEvaluator();
+        IVisitor<BinaryTreeNode, double> visitor = new BinaryTreeEvaluator();
         Assert.AreEqual(6, _visitable.Accept(visitor));
     }
 }

@@ -1,14 +1,10 @@
 namespace Visitor.NET;
-
-/// <summary>Marker interface of a visitor entity</summary>
-// ReSharper disable once UnusedTypeParameter
-public interface IVisitor<out T>{}
     
 /// <summary>Contract of visitor type</summary>
 /// <typeparam name="TVisitable">What we visit</typeparam>
 /// <typeparam name="TReturn">What we return after visiting. If no return value supposed use <see cref="VisitUnit"/></typeparam>
-public interface IVisitor<in TVisitable, out TReturn> : IVisitor<TReturn>
-    where TVisitable : IVisitable
+public interface IVisitor<in TVisitable, out TReturn>
+    where TVisitable : IVisitable<TVisitable>
 {
     /// <summary>
     /// Method with logics of visiting.

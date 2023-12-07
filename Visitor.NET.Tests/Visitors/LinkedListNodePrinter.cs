@@ -4,7 +4,8 @@ using Visitor.NET.Tests.VisitableAdapters;
 
 namespace Visitor.NET.Tests.Visitors;
 
-public class LinkedListNodePrinter<T> : IVisitor<LinkedListToVisitableAdapter<T>, VisitUnit>
+public class LinkedListNodePrinter<T> : VisitorBase<VisitableAdapter<LinkedListNode<T>>, VisitUnit>,
+    IVisitor<LinkedListToVisitableAdapter<T>, VisitUnit>
 {
     private readonly StringBuilder _sb = new();
     private readonly VisitableAdapterFactory<LinkedListNode<T>> _factory;
@@ -22,7 +23,7 @@ public class LinkedListNodePrinter<T> : IVisitor<LinkedListToVisitableAdapter<T>
         {
             var next = _factory.Create(node.Next);
             _sb.Append("->");
-            next.Accept(this);
+            next.Accept(This);
         }
 
         return default;

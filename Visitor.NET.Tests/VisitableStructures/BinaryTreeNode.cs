@@ -2,37 +2,40 @@ using System;
 
 namespace Visitor.NET.Tests.VisitableStructures;
 
-public abstract record BinaryTreeNode : IVisitable
+public abstract record BinaryTreeNode :
+    IVisitable<BinaryTreeNode>
 {
-    public abstract TReturn Accept<TReturn>(IVisitor<TReturn> visitor);
+    public abstract TReturn Accept<TReturn>(IVisitor<BinaryTreeNode, TReturn> visitor);
 }
 
-public record Operation(char Symbol, BinaryTreeNode Left, BinaryTreeNode Right) : BinaryTreeNode
+public record Operation(
+    char Symbol,
+    BinaryTreeNode Left,
+    BinaryTreeNode Right) : BinaryTreeNode, IVisitable<Operation>
 {
-    public override TReturn Accept<TReturn>(IVisitor<TReturn> visitor)
-    {
-        if (visitor is IVisitor<Operation, TReturn> concreteVisitor)
-            return concreteVisitor.Visit(this);
-        throw new NotSupportedException();
-    }
+    public override TReturn Accept<TReturn>(IVisitor<BinaryTreeNode, TReturn> visitor) =>
+        Accept(visitor);
+
+    public TReturn Accept<TReturn>(IVisitor<Operation, TReturn> visitor) =>
+        visitor.Visit(this);
 }
 
-public record Number(double Value) : BinaryTreeNode
+public record Number(double Value) :
+    BinaryTreeNode, IVisitable<Number>
 {
-    public override TReturn Accept<TReturn>(IVisitor<TReturn> visitor)
-    {
-        if (visitor is IVisitor<Number, TReturn> concreteVisitor)
-            return concreteVisitor.Visit(this);
-        throw new NotSupportedException();
-    }
+    public override TReturn Accept<TReturn>(IVisitor<BinaryTreeNode, TReturn> visitor) =>
+        Accept(visitor);
+
+    public TReturn Accept<TReturn>(IVisitor<Number, TReturn> visitor) =>
+        visitor.Visit(this);
 }
 
-public record Parenthesis(BinaryTreeNode Node) : BinaryTreeNode
+public record Parenthesis(BinaryTreeNode Node) :
+    BinaryTreeNode, IVisitable<Parenthesis>
 {
-    public override TReturn Accept<TReturn>(IVisitor<TReturn> visitor)
-    {
-        if (visitor is IVisitor<Parenthesis, TReturn> concreteVisitor)
-            return concreteVisitor.Visit(this);
-        throw new NotSupportedException();
-    }
+    public override TReturn Accept<TReturn>(IVisitor<BinaryTreeNode, TReturn> visitor) =>
+        Accept(visitor);
+
+    public TReturn Accept<TReturn>(IVisitor<Parenthesis, TReturn> visitor) =>
+        visitor.Visit(this);
 }

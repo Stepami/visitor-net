@@ -1,20 +1,23 @@
-using System;
 using Visitor.NET.Adapter;
 
 namespace Visitor.NET.Tests.VisitableAdapters;
 
-public class LinkedListToVisitableAdapter<T> : 
-    VisitableAdapter<LinkedListNode<T>>
+public class LinkedListToVisitableAdapter<T> :
+    VisitableAdapter<LinkedListNode<T>>,
+    IVisitable<LinkedListToVisitableAdapter<T>>
 {
     public LinkedListToVisitableAdapter(LinkedListNode<T> data) : base(data)
     {
     }
 
-    public override TReturn Accept<TReturn>(IVisitor<TReturn> visitor)
+    public override TReturn Accept<TReturn>(IVisitor<VisitableAdapter<LinkedListNode<T>>, TReturn> visitor)
     {
-        if (visitor is IVisitor<LinkedListToVisitableAdapter<T>, TReturn> concreteVisitor)
-            return concreteVisitor.Visit(this);
-        throw new NotSupportedException();
+        return Accept(visitor);
+    }
+
+    public TReturn Accept<TReturn>(IVisitor<LinkedListToVisitableAdapter<T>, TReturn> visitor)
+    {
+        return visitor.Visit(this);
     }
 }
 
