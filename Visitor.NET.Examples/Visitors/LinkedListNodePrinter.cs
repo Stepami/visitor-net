@@ -10,10 +10,8 @@ public class LinkedListNodePrinter<T> : VisitorNoReturnBase<VisitableAdapter<Lin
     private readonly StringBuilder _sb = new();
     private readonly VisitableAdapterFactory<LinkedListNode<T>> _factory;
 
-    public LinkedListNodePrinter(VisitableAdapterFactory<LinkedListNode<T>> factory)
-    {
+    public LinkedListNodePrinter(VisitableAdapterFactory<LinkedListNode<T>> factory) =>
         _factory = factory;
-    }
 
     public VisitUnit Visit(LinkedListToVisitableAdapter<T> visitable)
     {
