@@ -1,8 +1,8 @@
 using System.Text;
 using Visitor.NET.Adapter;
-using Visitor.NET.Tests.VisitableAdapters;
+using Visitor.NET.Examples.VisitableAdapters;
 
-namespace Visitor.NET.Tests.Visitors;
+namespace Visitor.NET.Examples.Visitors;
 
 public class LinkedListNodePrinter<T> : VisitorBase<VisitableAdapter<LinkedListNode<T>>, VisitUnit>,
     IVisitor<LinkedListToVisitableAdapter<T>, VisitUnit>

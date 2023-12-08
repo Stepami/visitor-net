@@ -1,7 +1,7 @@
 using System;
-using Visitor.NET.Tests.VisitableStructures;
+using Visitor.NET.Examples.VisitableStructures;
 
-namespace Visitor.NET.Tests.Visitors;
+namespace Visitor.NET.Examples.Visitors;
 
 public class BinaryTreeEvaluator : VisitorBase<BinaryTreeNode, double>,
     IVisitor<Operation, double>,

@@ -1,4 +1,4 @@
-namespace Visitor.NET.Tests.VisitableStructures;
+namespace Visitor.NET.Examples.VisitableStructures;
 
 public abstract record BinaryTreeNode :
     IVisitable<BinaryTreeNode>

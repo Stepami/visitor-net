@@ -1,6 +1,6 @@
 using Visitor.NET.Adapter;
 
-namespace Visitor.NET.Tests.VisitableAdapters;
+namespace Visitor.NET.Examples.VisitableAdapters;
 
 public class LinkedListToVisitableAdapter<T> :
     VisitableAdapter<LinkedListNode<T>>,

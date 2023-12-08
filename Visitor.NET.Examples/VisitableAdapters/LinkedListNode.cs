@@ -1,4 +1,4 @@
-namespace Visitor.NET.Tests.VisitableAdapters;
+namespace Visitor.NET.Examples.VisitableAdapters;
 
 public record LinkedListNode<T>(T Data, LinkedListNode<T> Next)
 {
