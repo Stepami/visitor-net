@@ -26,3 +26,10 @@ public abstract class VisitorBase<TBaseVisitable, TReturn> :
     public virtual TReturn Visit(TBaseVisitable visitable) =>
         throw new NotSupportedException();
 }
+
+/// <inheritdoc cref="VisitorBase{TBaseVisitable,TReturn}" />
+public abstract class VisitorNoReturnBase<TBaseVisitable> :
+    VisitorBase<TBaseVisitable, VisitUnit>, IVisitor<TBaseVisitable>
+    where TBaseVisitable : IVisitable<TBaseVisitable>
+{
+}

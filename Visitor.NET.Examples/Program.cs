@@ -10,10 +10,7 @@ BinaryTreeNode visitable = new Operation('+',
     new Parenthesis(
         new Operation('+',
             new Number(2),
-            new Number(3)
-        )
-    )
-);
+            new Number(3))));
 
 IVisitor<BinaryTreeNode, string> binaryTreeNodePrinter = new BinaryTreeNodePrinter();
 Console.WriteLine(visitable.Accept(binaryTreeNodePrinter));
@@ -22,15 +19,13 @@ Console.WriteLine(visitable.Accept(binaryTreeNodeEvaluator));
 
 var linkedList = new LinkedListNode<int>(3,
     new LinkedListNode<int>(1,
-        new LinkedListNode<int>(7, null)
-    )
-);
+        new LinkedListNode<int>(7, null)));
 
 VisitableAdapterFactory<LinkedListNode<int>> factory =
     new LinkedListToVisitableAdapterFactory<int>();
 
 var rootVisitable = factory.Create(linkedList);
-IVisitor<VisitableAdapter<LinkedListNode<int>>, VisitUnit> linkedListNodePrinter =
+IVisitor<VisitableAdapter<LinkedListNode<int>>> linkedListNodePrinter =
     new LinkedListNodePrinter<int>(factory);
 
 rootVisitable.Accept(linkedListNodePrinter);

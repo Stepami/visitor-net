@@ -15,3 +15,10 @@ public interface IVisitor<in TVisitable, out TReturn>
     /// <returns>Product of visiting</returns>
     TReturn Visit(TVisitable visitable);
 }
+
+/// <inheritdoc />
+public interface IVisitor<in TVisitable> :
+    IVisitor<TVisitable, VisitUnit>
+    where TVisitable : IVisitable<TVisitable>
+{
+}

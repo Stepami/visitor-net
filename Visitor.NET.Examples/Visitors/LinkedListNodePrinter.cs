@@ -4,8 +4,8 @@ using Visitor.NET.Examples.VisitableAdapters;
 
 namespace Visitor.NET.Examples.Visitors;
 
-public class LinkedListNodePrinter<T> : VisitorBase<VisitableAdapter<LinkedListNode<T>>, VisitUnit>,
-    IVisitor<LinkedListToVisitableAdapter<T>, VisitUnit>
+public class LinkedListNodePrinter<T> : VisitorNoReturnBase<VisitableAdapter<LinkedListNode<T>>>,
+    IVisitor<LinkedListToVisitableAdapter<T>>
 {
     private readonly StringBuilder _sb = new();
     private readonly VisitableAdapterFactory<LinkedListNode<T>> _factory;
