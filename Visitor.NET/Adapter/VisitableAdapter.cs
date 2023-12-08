@@ -13,5 +13,6 @@ public abstract class VisitableAdapter<TData> :
     protected VisitableAdapter(TData data) => Data = data;
 
     /// <inheritdoc cref="IVisitable{T}.Accept{TReturn}"/>
-    public abstract TReturn Accept<TReturn>(IVisitor<VisitableAdapter<TData>, TReturn> visitor);
+    public abstract TReturn Accept<TReturn>(
+        IVisitor<VisitableAdapter<TData>, TReturn> visitor);
 }
