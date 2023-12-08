@@ -1,5 +1,3 @@
-using System;
-
 namespace Visitor.NET.Tests.VisitableStructures;
 
 public abstract record BinaryTreeNode :
