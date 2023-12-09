@@ -1,5 +1,8 @@
+![logo](visitor-net-logo.jpg)
+
 Status:
 
+![stars](https://img.shields.io/github/stars/stepami/visitor-net?style=flat-square&cacheSeconds=604800)
 [![NuGet](https://img.shields.io/nuget/dt/Visitor.NET.svg)](https://www.nuget.org/packages/Visitor.NET/)
 
 # Visitor.NET
