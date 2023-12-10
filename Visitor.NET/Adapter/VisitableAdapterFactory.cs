@@ -3,6 +3,7 @@ namespace Visitor.NET.Adapter;
 /// <summary>Adapter factory contract</summary>
 /// <typeparam name="TData">Type wrapped with adapter</typeparam>
 public abstract class VisitableAdapterFactory<TData>
+    where TData : notnull
 {
     /// <summary>
     /// Factory method.

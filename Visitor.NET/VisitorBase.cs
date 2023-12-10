@@ -1,5 +1,3 @@
-using System;
-
 namespace Visitor.NET;
 
 /// <summary>Base visitor</summary>
@@ -30,6 +28,4 @@ public abstract class VisitorBase<TBaseVisitable, TReturn> :
 /// <inheritdoc cref="VisitorBase{TBaseVisitable,TReturn}" />
 public abstract class VisitorNoReturnBase<TBaseVisitable> :
     VisitorBase<TBaseVisitable, VisitUnit>, IVisitor<TBaseVisitable>
-    where TBaseVisitable : IVisitable<TBaseVisitable>
-{
-}
+    where TBaseVisitable : IVisitable<TBaseVisitable>;
