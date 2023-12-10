@@ -12,7 +12,7 @@ public class BinaryTreeEvaluator : VisitorBase<BinaryTreeNode, double>,
         visitable.Symbol switch
         {
             '+' => visitable.Left.Accept(This) + visitable.Right.Accept(This),
-            _ => throw new NotImplementedException()
+            _ => throw new ArgumentOutOfRangeException(nameof(visitable.Symbol))
         };
 
     public double Visit(Number visitable) => visitable.Value;

@@ -4,6 +4,7 @@ namespace Visitor.NET.Adapter;
 /// <typeparam name="TData">Type of wrapped data</typeparam>
 public abstract class VisitableAdapter<TData> :
     IVisitable<VisitableAdapter<TData>>
+    where TData : notnull
 {
     /// <summary>Data that needs to be visitable</summary>
     public TData Data { get; }

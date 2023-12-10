@@ -19,6 +19,4 @@ public interface IVisitor<in TVisitable, out TReturn>
 /// <inheritdoc />
 public interface IVisitor<in TVisitable> :
     IVisitor<TVisitable, VisitUnit>
-    where TVisitable : IVisitable<TVisitable>
-{
-}
+    where TVisitable : IVisitable<TVisitable>;

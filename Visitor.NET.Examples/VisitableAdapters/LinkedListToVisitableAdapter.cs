@@ -23,6 +23,6 @@ public class LinkedListToVisitableAdapter<T> :
 public class LinkedListToVisitableAdapterFactory<T> :
     VisitableAdapterFactory<LinkedListNode<T>>
 {
-    public override LinkedListToVisitableAdapter<T> Create(LinkedListNode<T> data) =>
-        new(data);
+    public override VisitableAdapter<LinkedListNode<T>> Create(LinkedListNode<T> data) =>
+        new LinkedListToVisitableAdapter<T>(data);
 }
