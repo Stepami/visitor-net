@@ -1,28 +1,31 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <LangVersion>latest</LangVersion>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
         <PackageId>Visitor.NET</PackageId>
-        <Description>Definitive contracts for Visitor Pattern implementation</Description>
-        <Version>3.0.0</Version>
+        <Description>First-ever acyclic generic extensible typesafe implementation of Visitor pattern for .NET without any usage of dynamic cast</Description>
+        <Version>4.0.0</Version>
         <Authors>Stepami</Authors>
         <Company>N/A</Company>
-        <Copyright>Copyright © Stepami 2022</Copyright>
+        <Copyright>Copyright © Stepami 2024</Copyright>
         <RepositoryUrl>https://github.com/Stepami/visitor-net</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
         <PackageProjectUrl>https://github.com/Stepami/visitor-net</PackageProjectUrl>
         <Title>Visitor.NET</Title>
         <PackageLicenseFile>LICENSE</PackageLicenseFile>
-        <PackageTags>Visitor Pattern Contracts</PackageTags>
+        <PackageTags>Visitor Pattern Contracts Generics Extensible CSharp Typesafe Acyclic Compile-Time</PackageTags>
         <RootNamespace>Visitor.NET</RootNamespace>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-      <DocumentationFile>bin\Debug\netstandard2.1\Visitor.NET.Lib.xml</DocumentationFile>
+      <DocumentationFile>bin\Debug\netstandard2.0\Visitor.NET.Lib.xml</DocumentationFile>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-      <DocumentationFile>bin\Release\netstandard2.1\Visitor.NET.Lib.xml</DocumentationFile>
+      <DocumentationFile>bin\Release\netstandard2.0\Visitor.NET.Lib.xml</DocumentationFile>
     </PropertyGroup>
     
     <PropertyGroup>

@@ -2,7 +2,7 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Visitor.NET", "Visitor.NET\Visitor.NET.csproj", "{4F447E04-0EC9-47FE-A6AF-E4D1EE8BC746}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Visitor.NET.Tests", "Visitor.NET.Tests\Visitor.NET.Tests.csproj", "{FF98EAC5-AA66-4D73-B386-7E5E829174D9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Visitor.NET.Examples", "Visitor.NET.Examples\Visitor.NET.Examples.csproj", "{FF98EAC5-AA66-4D73-B386-7E5E829174D9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
