@@ -4,6 +4,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Visitor.NET", "Visitor.NET\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Visitor.NET.Examples", "Visitor.NET.Examples\Visitor.NET.Examples.csproj", "{FF98EAC5-AA66-4D73-B386-7E5E829174D9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Visitor.NET.AutoVisitableGen", "Visitor.NET.AutoVisitableGen\Visitor.NET.AutoVisitableGen\Visitor.NET.AutoVisitableGen.csproj", "{4182E6B1-BFBA-4D76-AD83-2D32C25BC14B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Visitor.NET.AutoVisitableGen.Sample", "Visitor.NET.AutoVisitableGen\Visitor.NET.AutoVisitableGen.Sample\Visitor.NET.AutoVisitableGen.Sample.csproj", "{4AFF2027-AD46-4AE4-8BBA-FA12FF7DC5C4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Visitor.NET.AutoVisitableGen.Tests", "Visitor.NET.AutoVisitableGen\Visitor.NET.AutoVisitableGen.Tests\Visitor.NET.AutoVisitableGen.Tests.csproj", "{58CF84FC-89D9-464E-8985-6E0C1F9B2D29}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +24,17 @@ Global
 		{FF98EAC5-AA66-4D73-B386-7E5E829174D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FF98EAC5-AA66-4D73-B386-7E5E829174D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FF98EAC5-AA66-4D73-B386-7E5E829174D9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4182E6B1-BFBA-4D76-AD83-2D32C25BC14B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4182E6B1-BFBA-4D76-AD83-2D32C25BC14B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4182E6B1-BFBA-4D76-AD83-2D32C25BC14B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4182E6B1-BFBA-4D76-AD83-2D32C25BC14B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4AFF2027-AD46-4AE4-8BBA-FA12FF7DC5C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4AFF2027-AD46-4AE4-8BBA-FA12FF7DC5C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4AFF2027-AD46-4AE4-8BBA-FA12FF7DC5C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4AFF2027-AD46-4AE4-8BBA-FA12FF7DC5C4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{58CF84FC-89D9-464E-8985-6E0C1F9B2D29}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{58CF84FC-89D9-464E-8985-6E0C1F9B2D29}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{58CF84FC-89D9-464E-8985-6E0C1F9B2D29}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{58CF84FC-89D9-464E-8985-6E0C1F9B2D29}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
