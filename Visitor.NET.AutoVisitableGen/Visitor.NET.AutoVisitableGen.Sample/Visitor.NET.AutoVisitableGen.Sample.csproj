@@ -1,7 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
+        <TargetFramework>net7.0</TargetFramework>
+        <LangVersion>default</LangVersion>
+        <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <RootNamespace>Visitor.NET.AutoVisitableGen.Sample</RootNamespace>
     </PropertyGroup>
@@ -9,10 +11,6 @@
     <ItemGroup>
         <ProjectReference Include="..\..\Visitor.NET\Visitor.NET.csproj" />
         <ProjectReference Include="..\Visitor.NET.AutoVisitableGen\Visitor.NET.AutoVisitableGen.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false"/>
-    </ItemGroup>
-
-    <ItemGroup>
-        <None Remove="DDD.UbiquitousLanguageRegistry.txt"/>
     </ItemGroup>
 
 </Project>
