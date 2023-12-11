@@ -205,3 +205,31 @@ public class LinkedListNodePrinter<T> : VisitorNoReturnBase<VisitableAdapter<Lin
     public override string ToString() => _sb.ToString();
 }
 ```
+
+# Visitor.NET.AutoVisitableGen
+
+If you do not want implement visitable manually, you can do it automatically with incremental source generator.
+
+Install package : [https://www.nuget.org/packages/Visitor.NET.AutoVisitableGen](https://www.nuget.org/packages/Visitor.NET.AutoVisitableGen).
+
+Then, rewrite the nodes type declarations like this:
+
+```csharp
+public abstract record BinaryTreeNode : IVisitable<BinaryTreeNode>
+{
+    public abstract TReturn Accept<TReturn>(
+        IVisitor<BinaryTreeNode, TReturn> visitor);
+}
+
+[AutoVisitable<BinaryTreeNode>]
+public partial record Operation(
+    char Symbol,
+    BinaryTreeNode Left,
+    BinaryTreeNode Right) : BinaryTreeNode;
+
+[AutoVisitable<BinaryTreeNode>]
+public partial record Number(double Value) : BinaryTreeNode;
+
+[AutoVisitable<BinaryTreeNode>]
+public partial record Parenthesis(BinaryTreeNode Node) : BinaryTreeNode;
+```

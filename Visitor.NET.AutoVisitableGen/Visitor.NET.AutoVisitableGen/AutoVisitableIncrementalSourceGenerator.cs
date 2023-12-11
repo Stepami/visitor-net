@@ -76,7 +76,6 @@ public class AutoVisitableAttribute<T> : System.Attribute
             {
                 "class" => TypeKind.Class,
                 "record" => TypeKind.Record,
-                "struct" => TypeKind.Struct,
                 _ => null
             };
             if (kind is null)
@@ -145,6 +144,5 @@ internal record VisitableInfo(
 internal enum TypeKind
 {
     Class,
-    Record,
-    Struct
+    Record
 }
