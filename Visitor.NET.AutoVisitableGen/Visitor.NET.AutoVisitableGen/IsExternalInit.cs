@@ -1,4 +1,6 @@
+// ReSharper disable once CheckNamespace
 namespace System.Runtime.CompilerServices
 {
-    internal static class IsExternalInit { }
+    // ReSharper disable once UnusedType.Global
+    internal static class IsExternalInit;
 }
