@@ -5,6 +5,7 @@
         <LangVersion>default</LangVersion>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <OutputType>Exe</OutputType>
         <RootNamespace>Visitor.NET.AutoVisitableGen.Sample</RootNamespace>
     </PropertyGroup>
 
