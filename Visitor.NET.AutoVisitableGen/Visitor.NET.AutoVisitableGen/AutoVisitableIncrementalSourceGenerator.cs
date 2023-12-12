@@ -48,47 +48,45 @@ public class AutoVisitableAttribute<T> : System.Attribute
     {
         var typeDeclarationSyntax = (TypeDeclarationSyntax)context.Node;
 
-        foreach (var attributeSyntax in typeDeclarationSyntax.AttributeLists
-                     .SelectMany(attributeListSyntax => attributeListSyntax.Attributes))
-        {
-            if (ModelExtensions.GetSymbolInfo(
-                    context.SemanticModel,
-                    attributeSyntax).Symbol is not IMethodSymbol)
-                continue;
-
-            if (typeDeclarationSyntax is InterfaceDeclarationSyntax)
-                continue;
-
-            if (attributeSyntax.Name is not GenericNameSyntax genericAttribute)
-                continue;
-
-            var attributeName = genericAttribute.Identifier.Text;
-
-            if (attributeName is not "AutoVisitable" and "AutoVisitableAttribute")
-                continue;
-
-            var baseType = genericAttribute.TypeArgumentList.Arguments.FirstOrDefault()?.ToString();
-            if (baseType is null)
-                continue;
-
-            var visitableName = typeDeclarationSyntax.Identifier.Text;
-            TypeKind? kind = typeDeclarationSyntax.Keyword.Text switch
+        var attribute = typeDeclarationSyntax.AttributeLists
+            .SelectMany(attributeListSyntax => attributeListSyntax.Attributes)
+            .FirstOrDefault(attributeSyntax =>
             {
-                "class" => TypeKind.Class,
-                "record" => TypeKind.Record,
-                _ => null
-            };
-            if (kind is null)
-                return null;
+                if (ModelExtensions.GetSymbolInfo(
+                        context.SemanticModel,
+                        attributeSyntax).Symbol is not IMethodSymbol)
+                    return false;
 
-            return new VisitableInfo(
-                kind.Value,
-                baseType,
-                visitableName,
-                typeDeclarationSyntax);
-        }
+                if (attributeSyntax.Name is not GenericNameSyntax genericAttribute)
+                    return false;
 
-        return null;
+                var attributeName = genericAttribute.Identifier.Text;
+
+                return attributeName is "AutoVisitable" or "AutoVisitableAttribute";
+            });
+
+        var baseType = (attribute?.Name as GenericNameSyntax)?
+            .TypeArgumentList.Arguments
+            .FirstOrDefault()?.ToString();
+        if (baseType is null)
+            return null;
+
+        TypeKind? kind = typeDeclarationSyntax.Keyword.Text switch
+        {
+            "class" => TypeKind.Class,
+            "record" => TypeKind.Record,
+            _ => null
+        };
+        if (kind is null)
+            return null;
+
+        var visitableName = typeDeclarationSyntax.Identifier.Text;
+
+        return new VisitableInfo(
+            kind.Value,
+            baseType,
+            visitableName,
+            typeDeclarationSyntax);
     }
 
     private static void GenerateCode(
@@ -96,10 +94,8 @@ public class AutoVisitableAttribute<T> : System.Attribute
         Compilation compilation,
         ImmutableArray<VisitableInfo> visitableInfos) 
     {
-        foreach (var visitableInfo in visitableInfos)
+        foreach (var (typeKind, baseTypeName, visitableTypeName, typeDeclarationSyntax) in visitableInfos)
         {
-            var typeDeclarationSyntax = visitableInfo.TypeDeclarationSyntax;
-
             var semanticModel = compilation.GetSemanticModel(typeDeclarationSyntax.SyntaxTree);
 
             if (ModelExtensions.GetDeclaredSymbol(
@@ -115,21 +111,21 @@ using Visitor.NET;
 
 namespace {namespaceName};
 
-public partial {visitableInfo.Kind.ToString().ToLower()} {visitableInfo.VisitableTypeName} :
-    IVisitable<{visitableInfo.VisitableTypeName}>
+public partial {typeKind.ToString().ToLower()} {visitableTypeName} :
+    IVisitable<{visitableTypeName}>
 {{
     public override TReturn Accept<TReturn>(
-        IVisitor<{visitableInfo.BaseTypeName}, TReturn> visitor) =>
+        IVisitor<{baseTypeName}, TReturn> visitor) =>
         Accept(visitor);
 
     public TReturn Accept<TReturn>(
-        IVisitor<{visitableInfo.VisitableTypeName}, TReturn> visitor) =>
+        IVisitor<{visitableTypeName}, TReturn> visitor) =>
         visitor.Visit(this);
 }}
 ";
 
             context.AddSource(
-                $"{visitableInfo.VisitableTypeName}.g.cs",
+                $"{visitableTypeName}.g.cs",
                 SourceText.From(code, Encoding.UTF8));
         }
     }
