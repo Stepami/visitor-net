@@ -30,17 +30,21 @@ public class AutoVisitableAttribute<T> : System.Attribute
 
         var provider = context.SyntaxProvider
             .ForAttributeWithMetadataName("Visitor.NET.AutoVisitableAttribute`1",
-                static (s, _) => s is TypeDeclarationSyntax { AttributeLists.Count: > 0 } candidate
-                                     and not InterfaceDeclarationSyntax &&
-                                 candidate.Modifiers.Any(SyntaxKind.PublicKeyword) &&
-                                 candidate.Modifiers.Any(SyntaxKind.PartialKeyword) &&
-                                 !candidate.Modifiers.Any(SyntaxKind.StaticKeyword),
-                (ctx, _) => GetTypeDeclarationForSourceGen(ctx))
+                static (s, _) => IsSyntaxTargetForGeneration(s),
+                static (ctx, _) => GetTypeDeclarationForSourceGen(ctx))
             .Where(t => t is not null)
             .Select((x, _) => x!);
 
         context.RegisterSourceOutput(context.CompilationProvider.Combine(provider.Collect()),
             (ctx, t) => GenerateCode(ctx, t.Left, t.Right));
+    }
+
+    private static bool IsSyntaxTargetForGeneration(SyntaxNode syntaxNode)
+    {
+        return syntaxNode is TypeDeclarationSyntax { AttributeLists.Count: > 0 } candidate and not InterfaceDeclarationSyntax &&
+               candidate.Modifiers.Any(SyntaxKind.PublicKeyword) &&
+               candidate.Modifiers.Any(SyntaxKind.PartialKeyword) &&
+               !candidate.Modifiers.Any(SyntaxKind.StaticKeyword);
     }
 
     private static VisitableInfo? GetTypeDeclarationForSourceGen(
