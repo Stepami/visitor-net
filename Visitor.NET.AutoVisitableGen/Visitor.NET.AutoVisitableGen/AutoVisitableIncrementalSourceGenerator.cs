@@ -29,12 +29,12 @@ public class AutoVisitableAttribute<T> : System.Attribute
             SourceText.From(AttributeSourceCode, Encoding.UTF8)));
 
         var provider = context.SyntaxProvider
-            .CreateSyntaxProvider(
-                (s, _) => s is TypeDeclarationSyntax { AttributeLists.Count: > 0 } candidate
-                              and not InterfaceDeclarationSyntax &&
-                          candidate.Modifiers.Any(SyntaxKind.PublicKeyword) &&
-                          candidate.Modifiers.Any(SyntaxKind.PartialKeyword) &&
-                          !candidate.Modifiers.Any(SyntaxKind.StaticKeyword),
+            .ForAttributeWithMetadataName("Visitor.NET.AutoVisitableAttribute`1",
+                static (s, _) => s is TypeDeclarationSyntax { AttributeLists.Count: > 0 } candidate
+                                     and not InterfaceDeclarationSyntax &&
+                                 candidate.Modifiers.Any(SyntaxKind.PublicKeyword) &&
+                                 candidate.Modifiers.Any(SyntaxKind.PartialKeyword) &&
+                                 !candidate.Modifiers.Any(SyntaxKind.StaticKeyword),
                 (ctx, _) => GetTypeDeclarationForSourceGen(ctx))
             .Where(t => t is not null)
             .Select((x, _) => x!);
@@ -44,9 +44,9 @@ public class AutoVisitableAttribute<T> : System.Attribute
     }
 
     private static VisitableInfo? GetTypeDeclarationForSourceGen(
-        GeneratorSyntaxContext context)
+        GeneratorAttributeSyntaxContext context)
     {
-        var typeDeclarationSyntax = (TypeDeclarationSyntax)context.Node;
+        var typeDeclarationSyntax = (TypeDeclarationSyntax)context.TargetNode;
 
         var attribute = typeDeclarationSyntax.AttributeLists
             .SelectMany(attributeListSyntax => attributeListSyntax.Attributes)
@@ -92,7 +92,7 @@ public class AutoVisitableAttribute<T> : System.Attribute
     private static void GenerateCode(
         SourceProductionContext context,
         Compilation compilation,
-        ImmutableArray<VisitableInfo> visitableInfos) 
+        ImmutableArray<VisitableInfo> visitableInfos)
     {
         foreach (var (typeKind, baseTypeName, visitableTypeName, typeDeclarationSyntax) in visitableInfos)
         {
