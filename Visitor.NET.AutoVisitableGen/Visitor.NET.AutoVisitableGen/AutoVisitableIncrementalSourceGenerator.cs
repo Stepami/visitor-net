@@ -39,17 +39,52 @@ public class AutoVisitableAttribute<T> : System.Attribute
             (ctx, t) => GenerateCode(ctx, t.Left, t.Right));
     }
 
-    private static bool IsSyntaxTargetForGeneration(SyntaxNode node) =>
-        node is TypeDeclarationSyntax candidate &&
-        candidate.Modifiers.Any(SyntaxKind.PublicKeyword) &&
-        candidate.Modifiers.Any(SyntaxKind.PartialKeyword) &&
-        !candidate.Modifiers.Any(SyntaxKind.StaticKeyword);
-
+   
     private static VisitableInfo? GetTypeDeclarationForSourceGen(
         GeneratorAttributeSyntaxContext context)
     {
         var typeDeclarationSyntax = (TypeDeclarationSyntax)context.TargetNode;
 
+        var baseType = GetBaseType(context, typeDeclarationSyntax);
+        if (baseType is null)
+        {
+            return null;
+        }
+
+        var kind = GetTypeKind(typeDeclarationSyntax);
+        if (kind is null)
+        {
+            return null;
+        }
+
+        var visitableName = typeDeclarationSyntax.Identifier.Text;
+
+        return new VisitableInfo(
+            kind.Value,
+            baseType,
+            visitableName,
+            typeDeclarationSyntax);
+    }
+    
+    private static bool IsSyntaxTargetForGeneration(SyntaxNode node) =>
+        node is TypeDeclarationSyntax candidate &&
+        candidate.Modifiers.Any(SyntaxKind.PublicKeyword) &&
+        candidate.Modifiers.Any(SyntaxKind.PartialKeyword) &&
+        !candidate.Modifiers.Any(SyntaxKind.StaticKeyword);
+    
+    private static TypeKind? GetTypeKind(TypeDeclarationSyntax typeDeclarationSyntax)
+    {
+        TypeKind? kind = typeDeclarationSyntax.Keyword.Text switch
+        {
+            "class" => TypeKind.Class,
+            "record" => TypeKind.Record,
+            _ => null
+        };
+        return kind;
+    }
+
+    private static string? GetBaseType(GeneratorAttributeSyntaxContext context, TypeDeclarationSyntax typeDeclarationSyntax)
+    {
         var attribute = typeDeclarationSyntax.AttributeLists
             .SelectMany(attributeListSyntax => attributeListSyntax.Attributes)
             .FirstOrDefault(attributeSyntax =>
@@ -70,25 +105,7 @@ public class AutoVisitableAttribute<T> : System.Attribute
         var baseType = (attribute?.Name as GenericNameSyntax)?
             .TypeArgumentList.Arguments
             .FirstOrDefault()?.ToString();
-        if (baseType is null)
-            return null;
-
-        TypeKind? kind = typeDeclarationSyntax.Keyword.Text switch
-        {
-            "class" => TypeKind.Class,
-            "record" => TypeKind.Record,
-            _ => null
-        };
-        if (kind is null)
-            return null;
-
-        var visitableName = typeDeclarationSyntax.Identifier.Text;
-
-        return new VisitableInfo(
-            kind.Value,
-            baseType,
-            visitableName,
-            typeDeclarationSyntax);
+        return baseType;
     }
 
     private static void GenerateCode(
