@@ -39,7 +39,7 @@ public class AutoVisitableAttribute<T> : System.Attribute
             (ctx, t) => GenerateCode(ctx, t.Left, t.Right));
     }
 
-   
+
     private static VisitableInfo? GetTypeDeclarationForSourceGen(
         GeneratorAttributeSyntaxContext context)
     {
@@ -65,25 +65,25 @@ public class AutoVisitableAttribute<T> : System.Attribute
             visitableName,
             typeDeclarationSyntax);
     }
-    
+
     private static bool IsSyntaxTargetForGeneration(SyntaxNode node) =>
         node is TypeDeclarationSyntax candidate &&
         candidate.Modifiers.Any(SyntaxKind.PublicKeyword) &&
         candidate.Modifiers.Any(SyntaxKind.PartialKeyword) &&
         !candidate.Modifiers.Any(SyntaxKind.StaticKeyword);
-    
+
     private static TypeKind? GetTypeKind(TypeDeclarationSyntax typeDeclarationSyntax)
     {
-        TypeKind? kind = typeDeclarationSyntax.Keyword.Text switch
+        return typeDeclarationSyntax switch
         {
-            "class" => TypeKind.Class,
-            "record" => TypeKind.Record,
+            ClassDeclarationSyntax => TypeKind.Class,
+            RecordDeclarationSyntax => TypeKind.Record,
             _ => null
         };
-        return kind;
     }
 
-    private static string? GetBaseType(GeneratorAttributeSyntaxContext context, TypeDeclarationSyntax typeDeclarationSyntax)
+    private static string? GetBaseType(GeneratorAttributeSyntaxContext context,
+        TypeDeclarationSyntax typeDeclarationSyntax)
     {
         var attribute = typeDeclarationSyntax.AttributeLists
             .SelectMany(attributeListSyntax => attributeListSyntax.Attributes)
