@@ -39,13 +39,11 @@ public class AutoVisitableAttribute<T> : System.Attribute
             (ctx, t) => GenerateCode(ctx, t.Left, t.Right));
     }
 
-    private static bool IsSyntaxTargetForGeneration(SyntaxNode syntaxNode)
-    {
-        return syntaxNode is TypeDeclarationSyntax { AttributeLists.Count: > 0 } candidate and not InterfaceDeclarationSyntax &&
-               candidate.Modifiers.Any(SyntaxKind.PublicKeyword) &&
-               candidate.Modifiers.Any(SyntaxKind.PartialKeyword) &&
-               !candidate.Modifiers.Any(SyntaxKind.StaticKeyword);
-    }
+    private static bool IsSyntaxTargetForGeneration(SyntaxNode node) =>
+        node is TypeDeclarationSyntax candidate &&
+        candidate.Modifiers.Any(SyntaxKind.PublicKeyword) &&
+        candidate.Modifiers.Any(SyntaxKind.PartialKeyword) &&
+        !candidate.Modifiers.Any(SyntaxKind.StaticKeyword);
 
     private static VisitableInfo? GetTypeDeclarationForSourceGen(
         GeneratorAttributeSyntaxContext context)
