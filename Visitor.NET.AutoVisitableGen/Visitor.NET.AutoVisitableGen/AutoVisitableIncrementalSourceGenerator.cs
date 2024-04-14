@@ -35,7 +35,7 @@ public class AutoVisitableAttribute<T> : System.Attribute
             .Where(t => t is not null)
             .Select((x, _) => x!);
 
-        context.RegisterSourceOutput(context.CompilationProvider.Combine(provider.Collect()),
+        context.RegisterImplementationSourceOutput(context.CompilationProvider.Combine(provider.Collect()),
             (ctx, t) => GenerateCode(ctx, t.Left, t.Right));
     }
 
