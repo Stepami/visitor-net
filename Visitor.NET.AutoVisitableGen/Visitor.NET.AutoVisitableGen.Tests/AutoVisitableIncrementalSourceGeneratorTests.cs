@@ -44,7 +44,7 @@ public partial {keyword} Operation :
     IVisitable<Operation>
 {{
     public override TReturn Accept<TReturn>(
-        IVisitor<BinaryTreeNode, TReturn> visitor) =>
+        IVisitor<MyNamespace.BinaryTreeNode, TReturn> visitor) =>
         Accept(visitor);
 
     public TReturn Accept<TReturn>(
