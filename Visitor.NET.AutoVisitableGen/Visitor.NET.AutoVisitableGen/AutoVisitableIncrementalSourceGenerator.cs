@@ -45,8 +45,8 @@ public class AutoVisitableAttribute<T> : System.Attribute
     {
         var typeDeclarationSyntax = (TypeDeclarationSyntax)context.TargetNode;
 
-        var baseType = GetBaseType(context, typeDeclarationSyntax);
-        if (baseType is null)
+        var typedArgumentName = GetAttributeTypedArgumentName(context);
+        if (typedArgumentName is null)
         {
             return null;
         }
@@ -61,7 +61,7 @@ public class AutoVisitableAttribute<T> : System.Attribute
 
         return new VisitableInfo(
             kind.Value,
-            baseType,
+            typedArgumentName,
             visitableName,
             typeDeclarationSyntax);
     }
@@ -82,30 +82,12 @@ public class AutoVisitableAttribute<T> : System.Attribute
         };
     }
 
-    private static string? GetBaseType(GeneratorAttributeSyntaxContext context,
-        TypeDeclarationSyntax typeDeclarationSyntax)
+    private static string? GetAttributeTypedArgumentName(GeneratorAttributeSyntaxContext context)
     {
-        var attribute = typeDeclarationSyntax.AttributeLists
-            .SelectMany(attributeListSyntax => attributeListSyntax.Attributes)
-            .FirstOrDefault(attributeSyntax =>
-            {
-                if (ModelExtensions.GetSymbolInfo(
-                        context.SemanticModel,
-                        attributeSyntax).Symbol is not IMethodSymbol)
-                    return false;
-
-                if (attributeSyntax.Name is not GenericNameSyntax genericAttribute)
-                    return false;
-
-                var attributeName = genericAttribute.Identifier.Text;
-
-                return attributeName is "AutoVisitable" or "AutoVisitableAttribute";
-            });
-
-        var baseType = (attribute?.Name as GenericNameSyntax)?
-            .TypeArgumentList.Arguments
-            .FirstOrDefault()?.ToString();
-        return baseType;
+        var attributeData = context.Attributes.FirstOrDefault(x =>
+            x.AttributeClass?.OriginalDefinition.ToString() == "Visitor.NET.AutoVisitableAttribute<T>");
+        var typeArgument = attributeData?.AttributeClass?.TypeArguments.FirstOrDefault();
+        return typeArgument?.ToDisplayString();
     }
 
     private static void GenerateCode(
