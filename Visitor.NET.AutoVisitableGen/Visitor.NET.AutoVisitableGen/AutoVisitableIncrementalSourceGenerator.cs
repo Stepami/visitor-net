@@ -131,7 +131,7 @@ public class AutoVisitableAttribute<T> : System.Attribute
             textWriter.WriteLine($"namespace {namespaceName};");
             textWriter.WriteLine();
             
-            // add contains types declarations
+            // add containing types declarations
             foreach (INamedTypeSymbol containingType in containingTypes)
             {
                 TypeKind kind = containingType.IsRecord ? TypeKind.Record : TypeKind.Class;
