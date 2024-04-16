@@ -119,16 +119,7 @@ public class AutoVisitableAttribute<T> : System.Attribute
 
             var namespaceName = classSymbol.ContainingNamespace.ToDisplayString();
 
-            // last is closest
-            List<INamedTypeSymbol> containingTypes = new();
-
-            for (INamedTypeSymbol? currentType = classSymbol.ContainingType; currentType != null; currentType = currentType.ContainingType)
-            {
-                containingTypes.Add(currentType);
-            }
-            
-            containingTypes.Reverse();
-            
+            List<INamedTypeSymbol> containingTypes = SymbolsHelper.GetContainingTypes(classSymbol);
             
             using StringWriter stringWriter = new StringWriter();
             using IndentedTextWriter textWriter = new IndentedTextWriter(stringWriter, "    ");
