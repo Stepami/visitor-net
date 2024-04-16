@@ -108,7 +108,7 @@ public class AutoVisitableAttribute<T> : System.Attribute
         Compilation compilation,
         ImmutableArray<VisitableInfo> visitableInfos) 
     {
-        foreach ((TypeKind typeKind, string baseTypeName, string visitableTypeName, TypeDeclarationSyntax typeDeclarationSyntax) in visitableInfos)
+        foreach (var (typeKind, baseTypeName, visitableTypeName, typeDeclarationSyntax) in visitableInfos)
         {
             var semanticModel = compilation.GetSemanticModel(typeDeclarationSyntax.SyntaxTree);
 
