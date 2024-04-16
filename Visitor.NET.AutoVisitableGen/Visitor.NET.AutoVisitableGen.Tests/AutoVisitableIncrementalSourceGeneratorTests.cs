@@ -12,7 +12,7 @@ public class AutoVisitableIncrementalSourceGeneratorTests
     [Theory]
     [InlineData("class")]
     [InlineData("record")]
-    public void CorrectlyGeneratedSourceTest(string keyword)
+    public void Initialize_DerivedTypeVisitable_ImplementationCorrectlyGenerated(string keyword)
     {
         var inputCompilation = CreateCompilation($@"
 using Visitor.NET;

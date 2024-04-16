@@ -32,8 +32,8 @@ public class AutoVisitableAttribute<T> : System.Attribute
             .ForAttributeWithMetadataName("Visitor.NET.AutoVisitableAttribute`1",
                 static (s, _) => IsSyntaxTargetForGeneration(s),
                 static (ctx, _) => GetTypeDeclarationForSourceGen(ctx))
-            .Where(t => t is not null)
-            .Select((x, _) => x!);
+            .Where(static x => x is not null)
+            .Select(static (x, _) => x!);
 
         context.RegisterImplementationSourceOutput(provider.Collect(), GenerateCode);
     }
@@ -49,7 +49,7 @@ public class AutoVisitableAttribute<T> : System.Attribute
         {
             return null;
         }
-        
+
         var typeNamespace = context.TargetSymbol.ContainingNamespace.IsGlobalNamespace
             ? null
             : context.TargetSymbol.ContainingNamespace.ToDisplayString();
@@ -59,7 +59,7 @@ public class AutoVisitableAttribute<T> : System.Attribute
         {
             return null;
         }
-        
+
         var visitableName = typeDeclarationSyntax.Identifier.Text;
 
         return new VisitableInfo(
