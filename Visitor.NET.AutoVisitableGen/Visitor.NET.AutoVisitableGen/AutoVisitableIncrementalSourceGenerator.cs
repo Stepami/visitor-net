@@ -29,87 +29,94 @@ public class AutoVisitableAttribute<T> : System.Attribute
             SourceText.From(AttributeSourceCode, Encoding.UTF8)));
 
         var provider = context.SyntaxProvider
-            .CreateSyntaxProvider(
-                (s, _) => s is TypeDeclarationSyntax { AttributeLists.Count: > 0 } candidate
-                              and not InterfaceDeclarationSyntax &&
-                          candidate.Modifiers.Any(SyntaxKind.PublicKeyword) &&
-                          candidate.Modifiers.Any(SyntaxKind.PartialKeyword) &&
-                          !candidate.Modifiers.Any(SyntaxKind.StaticKeyword),
-                (ctx, _) => GetTypeDeclarationForSourceGen(ctx))
-            .Where(t => t is not null)
-            .Select((x, _) => x!);
+            .ForAttributeWithMetadataName("Visitor.NET.AutoVisitableAttribute`1",
+                static (s, _) => IsSyntaxTargetForGeneration(s),
+                static (ctx, _) => GetTypeDeclarationForSourceGen(ctx))
+            .Where(static x => x is not null)
+            .Select(static (x, _) => x!);
 
-        context.RegisterSourceOutput(context.CompilationProvider.Combine(provider.Collect()),
-            (ctx, t) => GenerateCode(ctx, t.Left, t.Right));
+        context.RegisterImplementationSourceOutput(provider.Collect(), GenerateCode);
     }
 
+
     private static VisitableInfo? GetTypeDeclarationForSourceGen(
-        GeneratorSyntaxContext context)
+        GeneratorAttributeSyntaxContext context)
     {
-        var typeDeclarationSyntax = (TypeDeclarationSyntax)context.Node;
+        var visitable = (TypeDeclarationSyntax)context.TargetNode;
 
-        var attribute = typeDeclarationSyntax.AttributeLists
-            .SelectMany(attributeListSyntax => attributeListSyntax.Attributes)
-            .FirstOrDefault(attributeSyntax =>
-            {
-                if (ModelExtensions.GetSymbolInfo(
-                        context.SemanticModel,
-                        attributeSyntax).Symbol is not IMethodSymbol)
-                    return false;
-
-                if (attributeSyntax.Name is not GenericNameSyntax genericAttribute)
-                    return false;
-
-                var attributeName = genericAttribute.Identifier.Text;
-
-                return attributeName is "AutoVisitable" or "AutoVisitableAttribute";
-            });
-
-        var baseType = (attribute?.Name as GenericNameSyntax)?
-            .TypeArgumentList.Arguments
-            .FirstOrDefault()?.ToString();
-        if (baseType is null)
-            return null;
-
-        TypeKind? kind = typeDeclarationSyntax.Keyword.Text switch
+        var typedArgument = GetAttributeTypedArgument(context);
+        if (typedArgument is null)
         {
-            "class" => TypeKind.Class,
-            "record" => TypeKind.Record,
-            _ => null
-        };
-        if (kind is null)
             return null;
+        }
 
-        var visitableName = typeDeclarationSyntax.Identifier.Text;
+        var visitableNamespace = GetNamespaceName(context.TargetSymbol);
+        var typedArgumentNamespace = GetNamespaceName(typedArgument);
+
+        var typedArgumentName = string.Equals(typedArgumentNamespace, visitableNamespace)
+            ? typedArgument.Name
+            : typedArgument.ToDisplayString();
+
+        var kind = GetTypeKind(visitable);
+        if (kind is null)
+        {
+            return null;
+        }
+
+        var visitableName = visitable.Identifier.Text;
 
         return new VisitableInfo(
             kind.Value,
-            baseType,
+            typedArgumentName,
             visitableName,
-            typeDeclarationSyntax);
+            visitableNamespace);
+    }
+
+    private static bool IsSyntaxTargetForGeneration(SyntaxNode node) =>
+        node is TypeDeclarationSyntax candidate &&
+        candidate.Modifiers.Any(SyntaxKind.PublicKeyword) &&
+        candidate.Modifiers.Any(SyntaxKind.PartialKeyword) &&
+        !candidate.Modifiers.Any(SyntaxKind.StaticKeyword);
+
+    private static TypeKind? GetTypeKind(TypeDeclarationSyntax typeDeclarationSyntax)
+    {
+        return typeDeclarationSyntax switch
+        {
+            ClassDeclarationSyntax => TypeKind.Class,
+            RecordDeclarationSyntax => TypeKind.Record,
+            _ => null
+        };
+    }
+
+    private static string? GetNamespaceName(ISymbol contextTargetSymbol)
+    {
+        return contextTargetSymbol.ContainingNamespace.IsGlobalNamespace
+            ? null
+            : contextTargetSymbol.ContainingNamespace.ToDisplayString();
+    }
+
+    private static ITypeSymbol? GetAttributeTypedArgument(GeneratorAttributeSyntaxContext context)
+    {
+        var attributeData = context.Attributes.FirstOrDefault(x =>
+            x.AttributeClass?.OriginalDefinition.ToString() == "Visitor.NET.AutoVisitableAttribute<T>");
+        return attributeData?.AttributeClass?.TypeArguments.FirstOrDefault();
     }
 
     private static void GenerateCode(
         SourceProductionContext context,
-        Compilation compilation,
-        ImmutableArray<VisitableInfo> visitableInfos) 
+        ImmutableArray<VisitableInfo> visitableInfos)
     {
-        foreach (var (typeKind, baseTypeName, visitableTypeName, typeDeclarationSyntax) in visitableInfos)
+        foreach (var (typeKind, baseTypeName, visitableTypeName, typeNamespace) in visitableInfos)
         {
-            var semanticModel = compilation.GetSemanticModel(typeDeclarationSyntax.SyntaxTree);
-
-            if (ModelExtensions.GetDeclaredSymbol(
-                    semanticModel,
-                    typeDeclarationSyntax) is not INamedTypeSymbol classSymbol)
-                continue;
-
-            var namespaceName = classSymbol.ContainingNamespace.ToDisplayString();
+            var namespacePart = typeNamespace is null
+                ? string.Empty
+                : $"namespace {typeNamespace};";
 
             var code = $@"// <auto-generated/>
 
 using Visitor.NET;
 
-namespace {namespaceName};
+{namespacePart}
 
 public partial {typeKind.ToString().ToLower()} {visitableTypeName} :
     IVisitable<{visitableTypeName}>
@@ -134,8 +141,8 @@ public partial {typeKind.ToString().ToLower()} {visitableTypeName} :
 internal record VisitableInfo(
     TypeKind Kind,
     string BaseTypeName,
-    string VisitableTypeName,
-    TypeDeclarationSyntax TypeDeclarationSyntax);
+    string TypeName,
+    string? NamespaceName);
 
 internal enum TypeKind
 {
