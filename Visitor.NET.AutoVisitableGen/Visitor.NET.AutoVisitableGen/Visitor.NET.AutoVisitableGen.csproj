@@ -15,7 +15,7 @@
         <IncludeBuildOutput>false</IncludeBuildOutput>
 
         <Description>Incremental source generator for implementing visitables from Visitor.NET</Description>
-        <Version>1.0.1</Version>
+        <Version>1.1.0</Version>
         <Authors>Stepami</Authors>
         <Company>N/A</Company>
         <Copyright>Copyright © Stepami 2024</Copyright>
