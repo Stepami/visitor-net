@@ -17,11 +17,14 @@ public static class SymbolsHelper
     {
         List<INamedTypeSymbol> containingTypes = new();
 
-        for (INamedTypeSymbol? currentType = type.ContainingType; currentType != null; currentType = currentType.ContainingType)
+        INamedTypeSymbol? currentType = type.ContainingType;
+        while (currentType != null)
         {
             containingTypes.Add(currentType);
+            currentType = currentType.ContainingType;
         }
             
+        // change to top to bottom order
         containingTypes.Reverse();
         
         return containingTypes;
