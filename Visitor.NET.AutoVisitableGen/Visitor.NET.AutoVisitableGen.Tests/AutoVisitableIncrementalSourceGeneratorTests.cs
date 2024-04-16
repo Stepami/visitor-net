@@ -12,7 +12,7 @@ public class AutoVisitableIncrementalSourceGeneratorTests
     [Theory]
     [InlineData("class")]
     [InlineData("record")]
-    public void CorrectlyGeneratedSourceTest(string keyword)
+    public void Initialize_DerivedTypeVisitable_ImplementationCorrectlyGenerated(string keyword)
     {
         var inputCompilation = CreateCompilation($@"
 using Visitor.NET;
@@ -74,7 +74,7 @@ public partial {keyword} Operation :
     [Theory]
     [InlineData("class")]
     [InlineData("record")]
-    public void CorrectlyGeneratedSourceTest2(string keyword)
+    public void Initialize_NestedDerivedTypeVisitable_NestedImplementationCorrectlyGenerated(string keyword)
     {
         var inputCompilation = CreateCompilation($@"
 using Visitor.NET;
