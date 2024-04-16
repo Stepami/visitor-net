@@ -192,11 +192,11 @@ public partial record Parenthesis :
     [InlineData("")]
     [InlineData("namespace MyNamespace;")]
     [InlineData("namespace Root.MyNamespace;")]
-    public void Initialize_DerivedTypeVisitable_GeneratedWithCorrectNamespaces(string namesapce)
+    public void Initialize_DerivedTypeVisitable_GeneratedWithCorrectNamespaces(string @namespace)
     {
         var input = $@"using Visitor.NET;
 
-{namesapce}
+{@namespace}
 
 public abstract class BinaryTreeNode : IVisitable<BinaryTreeNode>
 {{
@@ -217,7 +217,7 @@ public partial class Operation(
 
 using Visitor.NET;
 
-{namesapce}
+{@namespace}
 
 public partial class Operation :
     IVisitable<Operation>
