@@ -42,31 +42,34 @@ public class AutoVisitableAttribute<T> : System.Attribute
     private static VisitableInfo? GetTypeDeclarationForSourceGen(
         GeneratorAttributeSyntaxContext context)
     {
-        var typeDeclarationSyntax = (TypeDeclarationSyntax)context.TargetNode;
+        var visitable = (TypeDeclarationSyntax)context.TargetNode;
 
-        var typedArgumentName = GetAttributeTypedArgumentName(context);
-        if (typedArgumentName is null)
+        var typedArgument = GetAttributeTypedArgument(context);
+        if (typedArgument is null)
         {
             return null;
         }
 
-        var typeNamespace = context.TargetSymbol.ContainingNamespace.IsGlobalNamespace
-            ? null
-            : context.TargetSymbol.ContainingNamespace.ToDisplayString();
+        var visitableNamespace = GetNamespaceName(context.TargetSymbol);
+        var typedArgumentNamespace = GetNamespaceName(typedArgument);
 
-        var kind = GetTypeKind(typeDeclarationSyntax);
+        var typedArgumentName = string.Equals(typedArgumentNamespace, visitableNamespace)
+            ? typedArgument.Name
+            : typedArgument.ToDisplayString();
+
+        var kind = GetTypeKind(visitable);
         if (kind is null)
         {
             return null;
         }
 
-        var visitableName = typeDeclarationSyntax.Identifier.Text;
+        var visitableName = visitable.Identifier.Text;
 
         return new VisitableInfo(
             kind.Value,
             typedArgumentName,
             visitableName,
-            typeNamespace);
+            visitableNamespace);
     }
 
     private static bool IsSyntaxTargetForGeneration(SyntaxNode node) =>
@@ -85,12 +88,18 @@ public class AutoVisitableAttribute<T> : System.Attribute
         };
     }
 
-    private static string? GetAttributeTypedArgumentName(GeneratorAttributeSyntaxContext context)
+    private static string? GetNamespaceName(ISymbol contextTargetSymbol)
+    {
+        return contextTargetSymbol.ContainingNamespace.IsGlobalNamespace
+            ? null
+            : contextTargetSymbol.ContainingNamespace.ToDisplayString();
+    }
+
+    private static ITypeSymbol? GetAttributeTypedArgument(GeneratorAttributeSyntaxContext context)
     {
         var attributeData = context.Attributes.FirstOrDefault(x =>
             x.AttributeClass?.OriginalDefinition.ToString() == "Visitor.NET.AutoVisitableAttribute<T>");
-        var typeArgument = attributeData?.AttributeClass?.TypeArguments.FirstOrDefault();
-        return typeArgument?.ToDisplayString();
+        return attributeData?.AttributeClass?.TypeArguments.FirstOrDefault();
     }
 
     private static void GenerateCode(
@@ -132,8 +141,8 @@ public partial {typeKind.ToString().ToLower()} {visitableTypeName} :
 internal record VisitableInfo(
     TypeKind Kind,
     string BaseTypeName,
-    string VisitableTypeName,
-    string? TypeNamespaceName);
+    string TypeName,
+    string? NamespaceName);
 
 internal enum TypeKind
 {
