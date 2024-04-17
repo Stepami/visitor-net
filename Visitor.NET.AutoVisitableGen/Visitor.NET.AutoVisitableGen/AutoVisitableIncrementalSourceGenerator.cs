@@ -65,7 +65,7 @@ public class AutoVisitableAttribute<T> : System.Attribute
 
         var visitableName = visitable.Identifier.Text;
         var accessModifier = context.TargetSymbol.DeclaredAccessibility.ToString().ToLower();
-
+        
         return new VisitableInfo(
             kind.Value,
             typedArgumentName,
@@ -77,6 +77,8 @@ public class AutoVisitableAttribute<T> : System.Attribute
     private static bool IsSyntaxTargetForGeneration(SyntaxNode node) =>
         node is TypeDeclarationSyntax candidate &&
         candidate.Modifiers.Any(SyntaxKind.PartialKeyword) &&
+        !candidate.Modifiers.Any(SyntaxKind.PrivateKeyword) &&
+        !candidate.Modifiers.Any(SyntaxKind.FileKeyword) &&
         !candidate.Modifiers.Any(SyntaxKind.StaticKeyword);
 
     private static TypeKind? GetTypeKind(TypeDeclarationSyntax typeDeclarationSyntax)
