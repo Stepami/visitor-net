@@ -1,0 +1,14 @@
+{
+  "$schema": "http://json.schemastore.org/launchsettings.json",
+  "profiles": {
+    "Visitor.NET.AutoVisitableGen.Sample": {
+      "commandName": "Project",
+      "environmentVariables": {
+      }
+    },
+    "Debug Generator ": {
+      "commandName": "DebugRoslynComponent",
+      "targetProject": "Visitor.NET.AutoVisitableGen.Sample.csproj"
+    }
+  }
+}

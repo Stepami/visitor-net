@@ -32,78 +32,92 @@ public class AutoVisitableAttribute<T> : System.Attribute
             SourceText.From(AttributeSourceCode, Encoding.UTF8)));
 
         var provider = context.SyntaxProvider
-            .CreateSyntaxProvider(
-                static (s, _) => s is TypeDeclarationSyntax { AttributeLists.Count: > 0 } candidate
-                              and not InterfaceDeclarationSyntax &&
-                          candidate.Modifiers.Any(SyntaxKind.PublicKeyword) &&
-                          candidate.Modifiers.Any(SyntaxKind.PartialKeyword) &&
-                          !candidate.Modifiers.Any(SyntaxKind.StaticKeyword),
+            .ForAttributeWithMetadataName("Visitor.NET.AutoVisitableAttribute`1",
+                static (s, _) => IsSyntaxTargetForGeneration(s),
                 static (ctx, _) => GetTypeDeclarationForSourceGen(ctx))
-            .Where(static t => t is not null)
+            .Where(static x => x is not null)
             .Select(static (x, _) => x!);
 
-        context.RegisterSourceOutput(context.CompilationProvider.Combine(provider.Collect()),
-            static (ctx, t) => GenerateCode(ctx, t.Left, t.Right));
+        context.RegisterImplementationSourceOutput(provider.Collect(), GenerateCode);
     }
 
+
     private static VisitableInfo? GetTypeDeclarationForSourceGen(
-        GeneratorSyntaxContext context)
+        GeneratorAttributeSyntaxContext context)
     {
-        var typeDeclarationSyntax = (TypeDeclarationSyntax)context.Node;
+        var visitable = (TypeDeclarationSyntax)context.TargetNode;
 
-        var attribute = typeDeclarationSyntax.AttributeLists
-            .SelectMany(attributeListSyntax => attributeListSyntax.Attributes)
-            .FirstOrDefault(attributeSyntax =>
-            {
-                if (ModelExtensions.GetSymbolInfo(
-                        context.SemanticModel,
-                        attributeSyntax).Symbol is not IMethodSymbol)
-                    return false;
-
-                if (attributeSyntax.Name is not GenericNameSyntax genericAttribute)
-                    return false;
-
-                var attributeName = genericAttribute.Identifier.Text;
-
-                return attributeName is "AutoVisitable" or "AutoVisitableAttribute";
-            });
-
-        var baseType = (attribute?.Name as GenericNameSyntax)?
-            .TypeArgumentList.Arguments
-            .FirstOrDefault()?.ToString();
-        if (baseType is null)
-            return null;
-
-        if (typeDeclarationSyntax.Keyword.Kind() is not (SyntaxKind.RecordKeyword or SyntaxKind.ClassKeyword))
+        var typedArgument = GetAttributeTypedArgument(context);
+        if (typedArgument is null)
         {
             return null;
         }
 
-        var visitableName = typeDeclarationSyntax.Identifier.Text;
+        var visitableNamespace = GetNamespaceName(context.TargetSymbol);
+        var typedArgumentNamespace = GetNamespaceName(typedArgument);
+        
+        var typedArgumentName = string.Equals(typedArgumentNamespace, visitableNamespace)
+            ? typedArgument.Name
+            : typedArgument.ToDisplayString();
 
-        List<ContainingTypeInfo> containingTypes = SyntaxHelper.GetContainingTypes(typeDeclarationSyntax, context.SemanticModel);
+        var kind = GetTypeKind(visitable);
+        if (kind is null)
+        {
+            return null;
+        }
 
+        var visitableName = visitable.Identifier.Text;
+        var accessModifier = context.TargetSymbol.DeclaredAccessibility.ToString().ToLower();
+        
+        List<ContainingTypeInfo> containingTypes = SyntaxHelper.GetContainingTypes(visitable, context.SemanticModel);
+        
         return new VisitableInfo(
-            baseType,
+            kind.Value,
+            typedArgumentName,
             visitableName,
-            typeDeclarationSyntax,
+            visitableNamespace,
+            accessModifier, 
             containingTypes);
+    }
+
+    private static bool IsSyntaxTargetForGeneration(SyntaxNode node) =>
+        node is TypeDeclarationSyntax candidate &&
+        candidate.Modifiers.Any(SyntaxKind.PartialKeyword) &&
+        !candidate.Modifiers.Any(SyntaxKind.ProtectedKeyword)&&
+        !candidate.Modifiers.Any(SyntaxKind.PrivateKeyword) &&
+        !candidate.Modifiers.Any(SyntaxKind.FileKeyword) &&
+        !candidate.Modifiers.Any(SyntaxKind.StaticKeyword);
+
+    private static TypeKind? GetTypeKind(TypeDeclarationSyntax typeDeclarationSyntax)
+    {
+        return typeDeclarationSyntax switch
+        {
+            ClassDeclarationSyntax => TypeKind.Class,
+            RecordDeclarationSyntax => TypeKind.Record,
+            _ => null
+        };
+    }
+
+    private static string? GetNamespaceName(ISymbol contextTargetSymbol)
+    {
+        return contextTargetSymbol.ContainingNamespace.IsGlobalNamespace
+            ? null
+            : contextTargetSymbol.ContainingNamespace.ToDisplayString();
+    }
+
+    private static ITypeSymbol? GetAttributeTypedArgument(GeneratorAttributeSyntaxContext context)
+    {
+        var attributeData = context.Attributes.FirstOrDefault(x =>
+            x.AttributeClass?.OriginalDefinition.ToString() == "Visitor.NET.AutoVisitableAttribute<T>");
+        return attributeData?.AttributeClass?.TypeArguments.FirstOrDefault();
     }
 
     private static void GenerateCode(
         SourceProductionContext context,
-        Compilation compilation,
-        ImmutableArray<VisitableInfo> visitableInfos) 
+        ImmutableArray<VisitableInfo> visitableInfos)
     {
-        foreach (var (baseTypeName, visitableTypeName, typeDeclarationSyntax, containingTypes) in visitableInfos)
+        foreach (var (typeKind, baseTypeName, visitableTypeName, typeNamespace, accessModifier, containingTypes) in visitableInfos)
         {
-            var semanticModel = compilation.GetSemanticModel(typeDeclarationSyntax.SyntaxTree);
-
-            if (semanticModel.GetDeclaredSymbol(typeDeclarationSyntax) is not INamedTypeSymbol classSymbol)
-                continue;
-
-            var namespaceName = classSymbol.ContainingNamespace.ToDisplayString();
-            
             using StringWriter stringWriter = new StringWriter();
             using IndentedTextWriter textWriter = new IndentedTextWriter(stringWriter, "    ");
             
@@ -111,7 +125,11 @@ public class AutoVisitableAttribute<T> : System.Attribute
             textWriter.WriteLine();
             textWriter.WriteLine("using Visitor.NET;");
             textWriter.WriteLine();
-            textWriter.WriteLine($"namespace {namespaceName};");
+            if (typeNamespace != null)
+            {
+                textWriter.Write($"namespace {typeNamespace};");
+            }
+            textWriter.WriteLine();
             textWriter.WriteLine();
             
             // add containing types declarations
@@ -121,8 +139,7 @@ public class AutoVisitableAttribute<T> : System.Attribute
                 textWriter.WriteLine("{");
                 textWriter.Indent++;
             }
-
-            textWriter.WriteLine($"public partial {typeDeclarationSyntax.Keyword.Text} {visitableTypeName} :");
+            textWriter.WriteLine($"{accessModifier} partial {typeKind.ToString().ToLower()} {visitableTypeName} :");
             textWriter.WriteLine($"    IVisitable<{visitableTypeName}>");
             textWriter.WriteLine("{");
             textWriter.Indent++;
@@ -135,7 +152,7 @@ public class AutoVisitableAttribute<T> : System.Attribute
             textWriter.WriteLine("public TReturn Accept<TReturn>(");
             textWriter.WriteLine($"    IVisitor<{visitableTypeName}, TReturn> visitor) =>");
             textWriter.WriteLine("    visitor.Visit(this);");
-
+            
             textWriter.Indent--;
             textWriter.WriteLine("}");
             
@@ -146,15 +163,23 @@ public class AutoVisitableAttribute<T> : System.Attribute
                 textWriter.WriteLine("}");
             }
 
-            context.AddSource(
-                $"{visitableTypeName}.g.cs",
-                SourceText.From(stringWriter.ToString(), Encoding.UTF8));
+            var code = stringWriter.ToString();
+
+            context.AddSource($"{visitableTypeName}.g.cs", SourceText.From(code, Encoding.UTF8));
         }
     }
 }
 
 internal record VisitableInfo(
+    TypeKind Kind,
     string BaseTypeName,
-    string VisitableTypeName,
-    TypeDeclarationSyntax TypeDeclarationSyntax,
+    string TypeName,
+    string? NamespaceName,
+    string? AccessModifier,
     List<ContainingTypeInfo> ContainingTypes);
+
+internal enum TypeKind
+{
+    Class,
+    Record
+}
