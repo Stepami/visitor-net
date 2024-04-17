@@ -52,7 +52,7 @@ public class AutoVisitableAttribute<T> : System.Attribute
 
         var visitableNamespace = GetNamespaceName(context.TargetSymbol);
         var typedArgumentNamespace = GetNamespaceName(typedArgument);
-
+        
         var typedArgumentName = string.Equals(typedArgumentNamespace, visitableNamespace)
             ? typedArgument.Name
             : typedArgument.ToDisplayString();
@@ -64,18 +64,22 @@ public class AutoVisitableAttribute<T> : System.Attribute
         }
 
         var visitableName = visitable.Identifier.Text;
-
+        var accessModifier = context.TargetSymbol.DeclaredAccessibility.ToString().ToLower();
+        
         return new VisitableInfo(
             kind.Value,
             typedArgumentName,
             visitableName,
-            visitableNamespace);
+            visitableNamespace,
+            accessModifier);
     }
 
     private static bool IsSyntaxTargetForGeneration(SyntaxNode node) =>
         node is TypeDeclarationSyntax candidate &&
-        candidate.Modifiers.Any(SyntaxKind.PublicKeyword) &&
         candidate.Modifiers.Any(SyntaxKind.PartialKeyword) &&
+        !candidate.Modifiers.Any(SyntaxKind.ProtectedKeyword)&&
+        !candidate.Modifiers.Any(SyntaxKind.PrivateKeyword) &&
+        !candidate.Modifiers.Any(SyntaxKind.FileKeyword) &&
         !candidate.Modifiers.Any(SyntaxKind.StaticKeyword);
 
     private static TypeKind? GetTypeKind(TypeDeclarationSyntax typeDeclarationSyntax)
@@ -106,7 +110,7 @@ public class AutoVisitableAttribute<T> : System.Attribute
         SourceProductionContext context,
         ImmutableArray<VisitableInfo> visitableInfos)
     {
-        foreach (var (typeKind, baseTypeName, visitableTypeName, typeNamespace) in visitableInfos)
+        foreach (var (typeKind, baseTypeName, visitableTypeName, typeNamespace, accessModifier) in visitableInfos)
         {
             var namespacePart = typeNamespace is null
                 ? string.Empty
@@ -118,7 +122,7 @@ using Visitor.NET;
 
 {namespacePart}
 
-public partial {typeKind.ToString().ToLower()} {visitableTypeName} :
+{accessModifier} partial {typeKind.ToString().ToLower()} {visitableTypeName} :
     IVisitable<{visitableTypeName}>
 {{
     public override TReturn Accept<TReturn>(
@@ -131,9 +135,7 @@ public partial {typeKind.ToString().ToLower()} {visitableTypeName} :
 }}
 ";
 
-            context.AddSource(
-                $"{visitableTypeName}.g.cs",
-                SourceText.From(code, Encoding.UTF8));
+            context.AddSource($"{visitableTypeName}.g.cs", SourceText.From(code, Encoding.UTF8));
         }
     }
 }
@@ -142,7 +144,8 @@ internal record VisitableInfo(
     TypeKind Kind,
     string BaseTypeName,
     string TypeName,
-    string? NamespaceName);
+    string? NamespaceName,
+    string? AccessModifier);
 
 internal enum TypeKind
 {
