@@ -77,6 +77,7 @@ public class AutoVisitableAttribute<T> : System.Attribute
     private static bool IsSyntaxTargetForGeneration(SyntaxNode node) =>
         node is TypeDeclarationSyntax candidate &&
         candidate.Modifiers.Any(SyntaxKind.PartialKeyword) &&
+        !candidate.Modifiers.Any(SyntaxKind.ProtectedKeyword)&&
         !candidate.Modifiers.Any(SyntaxKind.PrivateKeyword) &&
         !candidate.Modifiers.Any(SyntaxKind.FileKeyword) &&
         !candidate.Modifiers.Any(SyntaxKind.StaticKeyword);
