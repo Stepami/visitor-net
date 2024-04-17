@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Xunit;
 
 namespace Visitor.NET.AutoVisitableGen.Tests;
 
-public class SymbolsHelperTest
+public class SyntaxHelperTest
 {
     [Fact]
     public void GetContainingTypes_OnNoContainingTypes_ReturnEmptyList()
@@ -19,7 +20,9 @@ public class NestedType {}
 
         INamedTypeSymbol nestedType = (INamedTypeSymbol) compilation.GetSymbolsWithName("NestedType").Single();
 
-        List<INamedTypeSymbol> containingTypes = SymbolsHelper.GetContainingTypes(nestedType);
+        var nestedTypeSyntaxNode = (ClassDeclarationSyntax) nestedType.DeclaringSyntaxReferences.Single().GetSyntax();
+
+        List<TypeDeclarationSyntax> containingTypes = SyntaxHelper.GetContainingTypes(nestedTypeSyntaxNode);
         
         Assert.Empty(containingTypes);
     }
@@ -32,7 +35,10 @@ public class ContainingTypeA
 {
     public class ContainingTypeB
     {
-        public class NestedType {}
+        public class ContainingTypeC
+        {
+            public class NestedType {}
+        }
     }
 }    
 ");
@@ -40,10 +46,13 @@ public class ContainingTypeA
 
         INamedTypeSymbol nestedType = (INamedTypeSymbol) compilation.GetSymbolsWithName("NestedType").Single();
 
-        List<INamedTypeSymbol> containingTypes = SymbolsHelper.GetContainingTypes(nestedType);
+        var nestedTypeSyntaxNode = (ClassDeclarationSyntax) nestedType.DeclaringSyntaxReferences.Single().GetSyntax();
+
+        List<TypeDeclarationSyntax> containingTypes = SyntaxHelper.GetContainingTypes(nestedTypeSyntaxNode);
         
-        Assert.Equal("ContainingTypeA", containingTypes[0].Name);
-        Assert.Equal("ContainingTypeB", containingTypes[1].Name);
-        Assert.Equal(2, containingTypes.Count);
+        Assert.Equal("ContainingTypeA", containingTypes[0].Identifier.Text);
+        Assert.Equal("ContainingTypeB", containingTypes[1].Identifier.Text);
+        Assert.Equal("ContainingTypeC", containingTypes[2].Identifier.Text);
+        Assert.Equal(3, containingTypes.Count);
     }
 }

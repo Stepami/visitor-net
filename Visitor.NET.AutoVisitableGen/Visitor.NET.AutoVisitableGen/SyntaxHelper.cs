@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Visitor.NET.AutoVisitableGen;
 
-public static class SymbolsHelper
+public static class SyntaxHelper
 {
     /// <summary>
     /// return list of types that contains type: <paramref name="type"/>.
@@ -12,16 +13,16 @@ public static class SymbolsHelper
     /// the order of element in list is top to bottom, deeper nested types is last. 
     /// </summary>
     /// <param name="type">type symbol</param>
-    /// <returns>list of <see cref="INamedTypeSymbol"/> that containing the provided type</returns>
-    public static List<INamedTypeSymbol> GetContainingTypes(INamedTypeSymbol type)
+    /// <returns>list of <see cref="TypeDeclarationSyntax"/> that containing the provided type</returns>
+    public static List<TypeDeclarationSyntax> GetContainingTypes(TypeDeclarationSyntax type)
     {
-        List<INamedTypeSymbol> containingTypes = new();
+        List<TypeDeclarationSyntax> containingTypes = new();
 
-        INamedTypeSymbol? currentType = type.ContainingType;
-        while (currentType != null)
+        SyntaxNode? currentType = type.Parent;
+        while (currentType is TypeDeclarationSyntax containingType)
         {
-            containingTypes.Add(currentType);
-            currentType = currentType.ContainingType;
+            containingTypes.Add(containingType);
+            currentType = currentType.Parent;
         }
             
         // change to top to bottom order

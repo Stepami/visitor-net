@@ -74,33 +74,20 @@ public class AutoVisitableAttribute<T> : System.Attribute
         if (baseType is null)
             return null;
 
-        TypeKind? kind = typeDeclarationSyntax.Keyword.Text switch
+        if (typeDeclarationSyntax.Keyword.Kind() is not (SyntaxKind.RecordKeyword or SyntaxKind.ClassKeyword))
         {
-            "class" => TypeKind.Class,
-            "record" => TypeKind.Record,
-            _ => null
-        };
-        if (kind is null)
             return null;
-
-        var visitableName = typeDeclarationSyntax.Identifier.Text;
-        
-        
-        // check all types in hierarchy are partial
-        SyntaxNode currentType = typeDeclarationSyntax;
-        while (currentType is not BaseNamespaceDeclarationSyntax)
-        {
-            if (currentType is BaseTypeDeclarationSyntax b && !b.Modifiers.Any(SyntaxKind.PartialKeyword))
-                return null;
-
-            currentType = currentType.Parent;
         }
 
+        var visitableName = typeDeclarationSyntax.Identifier.Text;
+
+        List<TypeDeclarationSyntax> containingTypes = SyntaxHelper.GetContainingTypes(typeDeclarationSyntax);
+
         return new VisitableInfo(
-            kind.Value,
             baseType,
             visitableName,
-            typeDeclarationSyntax);
+            typeDeclarationSyntax,
+            containingTypes);
     }
 
     private static void GenerateCode(
@@ -108,18 +95,14 @@ public class AutoVisitableAttribute<T> : System.Attribute
         Compilation compilation,
         ImmutableArray<VisitableInfo> visitableInfos) 
     {
-        foreach (var (typeKind, baseTypeName, visitableTypeName, typeDeclarationSyntax) in visitableInfos)
+        foreach (var (baseTypeName, visitableTypeName, typeDeclarationSyntax, containingTypes) in visitableInfos)
         {
             var semanticModel = compilation.GetSemanticModel(typeDeclarationSyntax.SyntaxTree);
 
-            if (ModelExtensions.GetDeclaredSymbol(
-                    semanticModel,
-                    typeDeclarationSyntax) is not INamedTypeSymbol classSymbol)
+            if (semanticModel.GetDeclaredSymbol(typeDeclarationSyntax) is not INamedTypeSymbol classSymbol)
                 continue;
 
             var namespaceName = classSymbol.ContainingNamespace.ToDisplayString();
-
-            List<INamedTypeSymbol> containingTypes = SymbolsHelper.GetContainingTypes(classSymbol);
             
             using StringWriter stringWriter = new StringWriter();
             using IndentedTextWriter textWriter = new IndentedTextWriter(stringWriter, "    ");
@@ -132,15 +115,14 @@ public class AutoVisitableAttribute<T> : System.Attribute
             textWriter.WriteLine();
             
             // add containing types declarations
-            foreach (INamedTypeSymbol containingType in containingTypes)
+            foreach (TypeDeclarationSyntax containingType in containingTypes)
             {
-                TypeKind kind = containingType.IsRecord ? TypeKind.Record : TypeKind.Class;
-                textWriter.WriteLine($"public partial {kind.ToString().ToLower()} {containingType.Name}");
+                textWriter.WriteLine($"public partial {containingType.Keyword.Text} {containingType.Identifier.Text}");
                 textWriter.WriteLine("{");
                 textWriter.Indent++;
             }
 
-            textWriter.WriteLine($"public partial {typeKind.ToString().ToLower()} {visitableTypeName} :");
+            textWriter.WriteLine($"public partial {typeDeclarationSyntax.Keyword.Text} {visitableTypeName} :");
             textWriter.WriteLine($"    IVisitable<{visitableTypeName}>");
             textWriter.WriteLine("{");
             textWriter.Indent++;
@@ -158,7 +140,7 @@ public class AutoVisitableAttribute<T> : System.Attribute
             textWriter.WriteLine("}");
             
             // add closing braces
-            foreach (INamedTypeSymbol _ in containingTypes)
+            foreach (var _ in containingTypes)
             {
                 textWriter.Indent--;
                 textWriter.WriteLine("}");
@@ -172,13 +154,7 @@ public class AutoVisitableAttribute<T> : System.Attribute
 }
 
 internal record VisitableInfo(
-    TypeKind Kind,
     string BaseTypeName,
     string VisitableTypeName,
-    TypeDeclarationSyntax TypeDeclarationSyntax);
-
-internal enum TypeKind
-{
-    Class,
-    Record
-}
+    TypeDeclarationSyntax TypeDeclarationSyntax,
+    List<TypeDeclarationSyntax> ContainingTypes);
