@@ -81,7 +81,7 @@ public class AutoVisitableAttribute<T> : System.Attribute
 
         var visitableName = typeDeclarationSyntax.Identifier.Text;
 
-        List<TypeDeclarationSyntax> containingTypes = SyntaxHelper.GetContainingTypes(typeDeclarationSyntax);
+        List<ContainingTypeInfo> containingTypes = SyntaxHelper.GetContainingTypes(typeDeclarationSyntax, context.SemanticModel);
 
         return new VisitableInfo(
             baseType,
@@ -115,9 +115,9 @@ public class AutoVisitableAttribute<T> : System.Attribute
             textWriter.WriteLine();
             
             // add containing types declarations
-            foreach (TypeDeclarationSyntax containingType in containingTypes)
+            foreach (ContainingTypeInfo containingType in containingTypes)
             {
-                textWriter.WriteLine($"public partial {containingType.Keyword.Text} {containingType.Identifier.Text}");
+                textWriter.WriteLine($"{containingType.Accessibility} partial {containingType.Keyword} {containingType.Name}");
                 textWriter.WriteLine("{");
                 textWriter.Indent++;
             }
@@ -157,4 +157,4 @@ internal record VisitableInfo(
     string BaseTypeName,
     string VisitableTypeName,
     TypeDeclarationSyntax TypeDeclarationSyntax,
-    List<TypeDeclarationSyntax> ContainingTypes);
+    List<ContainingTypeInfo> ContainingTypes);

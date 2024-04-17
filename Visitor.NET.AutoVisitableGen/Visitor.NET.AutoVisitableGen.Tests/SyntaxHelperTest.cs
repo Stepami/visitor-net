@@ -13,24 +13,25 @@ public class SyntaxHelperTest
     [Fact]
     public void GetContainingTypes_OnNoContainingTypes_ReturnEmptyList()
     {
-        var tree = CSharpSyntaxTree.ParseText(@"
+        var inputCode = CSharpSyntaxTree.ParseText(@"
 public class NestedType {}
 ");
-        CSharpCompilation compilation = CSharpCompilation.Create("test", new[] {tree}, Array.Empty<MetadataReference>());
+        CSharpCompilation compilation = CSharpCompilation.Create("test", new[] {inputCode}, Array.Empty<MetadataReference>());
 
         INamedTypeSymbol nestedType = (INamedTypeSymbol) compilation.GetSymbolsWithName("NestedType").Single();
 
         var nestedTypeSyntaxNode = (ClassDeclarationSyntax) nestedType.DeclaringSyntaxReferences.Single().GetSyntax();
 
-        List<TypeDeclarationSyntax> containingTypes = SyntaxHelper.GetContainingTypes(nestedTypeSyntaxNode);
+        SemanticModel semanticModel = compilation.GetSemanticModel(nestedTypeSyntaxNode.SyntaxTree);
+        List<ContainingTypeInfo> actualContainingTypes = SyntaxHelper.GetContainingTypes(nestedTypeSyntaxNode, semanticModel);
         
-        Assert.Empty(containingTypes);
+        Assert.Empty(actualContainingTypes);
     }
     
     [Fact]
     public void GetContainingTypes_OnMultipleContainingTypes_ReturnByOrderTopToBottom()
     {
-        var tree = CSharpSyntaxTree.ParseText(@"
+        var inputCode = CSharpSyntaxTree.ParseText(@"
 public class ContainingTypeA
 {
     public class ContainingTypeB
@@ -42,17 +43,21 @@ public class ContainingTypeA
     }
 }    
 ");
-        CSharpCompilation compilation = CSharpCompilation.Create("test", new[] {tree}, Array.Empty<MetadataReference>());
+        var expectedContainingTypes = new List<ContainingTypeInfo>() {
+            new("public", "class", "ContainingTypeA"),
+            new("public", "class", "ContainingTypeB"),
+            new("public", "class", "ContainingTypeC"),
+        };
+        
+        CSharpCompilation compilation = CSharpCompilation.Create("test", new[] {inputCode}, Array.Empty<MetadataReference>());
 
         INamedTypeSymbol nestedType = (INamedTypeSymbol) compilation.GetSymbolsWithName("NestedType").Single();
 
         var nestedTypeSyntaxNode = (ClassDeclarationSyntax) nestedType.DeclaringSyntaxReferences.Single().GetSyntax();
 
-        List<TypeDeclarationSyntax> containingTypes = SyntaxHelper.GetContainingTypes(nestedTypeSyntaxNode);
+        SemanticModel semanticModel = compilation.GetSemanticModel(nestedTypeSyntaxNode.SyntaxTree);
+        List<ContainingTypeInfo> actualContainingTypes = SyntaxHelper.GetContainingTypes(nestedTypeSyntaxNode, semanticModel);
         
-        Assert.Equal("ContainingTypeA", containingTypes[0].Identifier.Text);
-        Assert.Equal("ContainingTypeB", containingTypes[1].Identifier.Text);
-        Assert.Equal("ContainingTypeC", containingTypes[2].Identifier.Text);
-        Assert.Equal(3, containingTypes.Count);
+        Assert.Equal(expectedContainingTypes, actualContainingTypes);
     }
 }
