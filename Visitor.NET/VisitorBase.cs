@@ -23,6 +23,9 @@ public abstract class VisitorBase<TBaseVisitable, TReturn> :
     /// <exception cref="NotSupportedException">Thrown in base version of method</exception>
     public virtual TReturn Visit(TBaseVisitable visitable) =>
         throw new NotSupportedException();
+
+    /// <inheritdoc cref="IVisitor{TVisitable,TReturn}.DefaultVisit"/>
+    public virtual TReturn DefaultVisit => default!;
 }
 
 /// <inheritdoc cref="VisitorBase{TBaseVisitable,TReturn}" />
