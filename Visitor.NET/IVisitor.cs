@@ -14,6 +14,9 @@ public interface IVisitor<in TVisitable, out TReturn>
     /// <param name="visitable">An entity we visit</param>
     /// <returns>Product of visiting</returns>
     TReturn Visit(TVisitable visitable);
+
+    /// <summary>Default visit value during accept by visitable</summary>
+    TReturn DefaultVisit { get; }
 }
 
 /// <inheritdoc />
