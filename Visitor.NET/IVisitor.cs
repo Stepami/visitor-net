@@ -16,7 +16,7 @@ public interface IVisitor<in TVisitable, out TReturn>
     TReturn Visit(TVisitable visitable);
 
     /// <summary>Default visit value during accept by visitable</summary>
-    TReturn DefaultVisit { get; }
+    TReturn DefaultVisit => default!;
 }
 
 /// <inheritdoc />
