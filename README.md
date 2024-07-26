@@ -24,7 +24,7 @@ Install package : [https://www.nuget.org/packages/Visitor.NET](https://www.nuget
 
 ## Projects using Visitor.NET
 
-- [HydraScript](https://github.com/Stepami/extended-js-subset)
+- [HydraScript](https://github.com/Stepami/hydrascript)
 
 ## Usage
 
