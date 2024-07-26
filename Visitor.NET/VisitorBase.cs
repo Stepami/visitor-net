@@ -17,12 +17,10 @@ public abstract class VisitorBase<TBaseVisitable, TReturn> :
     /// <summary>Visiting root element of Composite</summary>
     /// <param name="visitable">Hierarchy root</param>
     /// <returns>
-    /// Base version throws exception as in some scenarios this method will never be called.
+    /// Returns <see cref="DefaultVisit"/>.<br/>
     /// But depending on client needs it can be overriden.
     /// </returns>
-    /// <exception cref="NotSupportedException">Thrown in base version of method</exception>
-    public virtual TReturn Visit(TBaseVisitable visitable) =>
-        throw new NotSupportedException();
+    public virtual TReturn Visit(TBaseVisitable visitable) => DefaultVisit;
 
     /// <inheritdoc cref="IVisitor{TVisitable,TReturn}.DefaultVisit"/>
     public virtual TReturn DefaultVisit => default!;
