@@ -2,7 +2,7 @@
 
 Status:
 
-![stars](https://img.shields.io/github/stars/stepami/visitor-net?style=flat-square&cacheSeconds=604800)
+![stars](https://img.shields.io/github/stars/stepami/visitor-net?style=flat-square)
 [![NuGet](https://img.shields.io/nuget/dt/Visitor.NET.svg)](https://www.nuget.org/packages/Visitor.NET/)
 
 # Visitor.NET
