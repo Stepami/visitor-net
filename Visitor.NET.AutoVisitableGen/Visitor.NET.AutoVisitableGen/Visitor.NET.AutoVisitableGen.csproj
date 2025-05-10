@@ -15,7 +15,7 @@
         <IncludeBuildOutput>false</IncludeBuildOutput>
 
         <Description>Incremental source generator for implementing visitables from Visitor.NET</Description>
-        <Version>1.3.0</Version>
+        <Version>1.4.0</Version>
         <Authors>Stepami</Authors>
         <Company>N/A</Company>
         <Copyright>Copyright © Stepami 2024</Copyright>
@@ -24,6 +24,7 @@
         <PackageProjectUrl>https://github.com/Stepami/visitor-net</PackageProjectUrl>
         <Title>Visitor.NET.AutoVisitableGen</Title>
         <PackageTags>Visitable Generics Extensible CSharp Typesafe Acyclic Compile-Time Incremental Source Generator</PackageTags>
+        <NoWarn>NU5128</NoWarn>
     </PropertyGroup>
 
     <ItemGroup>
