@@ -74,6 +74,7 @@ public class AutoVisitableAttribute<T> : System.Attribute
         return new VisitableInfo(
             kind.Value,
             typedArgumentName,
+            typedArgument.TypeKind is Microsoft.CodeAnalysis.TypeKind.Interface,
             visitableName,
             visitableNamespace,
             accessModifier, 
@@ -116,7 +117,7 @@ public class AutoVisitableAttribute<T> : System.Attribute
         SourceProductionContext context,
         ImmutableArray<VisitableInfo> visitableInfos)
     {
-        foreach (var (typeKind, baseTypeName, visitableTypeName, typeNamespace, accessModifier, containingTypes) in visitableInfos)
+        foreach (var (typeKind, baseTypeName, isBaseInterface, visitableTypeName, typeNamespace, accessModifier, containingTypes) in visitableInfos)
         {
             using StringWriter stringWriter = new StringWriter();
             using IndentedTextWriter textWriter = new IndentedTextWriter(stringWriter, "    ");
@@ -140,21 +141,40 @@ public class AutoVisitableAttribute<T> : System.Attribute
                 textWriter.WriteLine("{");
                 textWriter.Indent++;
             }
-            textWriter.WriteLine("[ExcludeFromCodeCoverage]");
             textWriter.WriteLine($"{accessModifier} partial {typeKind.ToString().ToLower()} {visitableTypeName} :");
             textWriter.WriteLine($"    IVisitable<{visitableTypeName}>");
             textWriter.WriteLine("{");
             textWriter.Indent++;
             
             // add implementation
-            textWriter.WriteLine("public override TReturn Accept<TReturn>(");
-            textWriter.WriteLine($"    IVisitor<{baseTypeName}, TReturn> visitor) =>");
-            textWriter.WriteLine("    Accept(visitor);");
-            textWriter.WriteLineNoTabs(string.Empty);
-            textWriter.WriteLine("public TReturn Accept<TReturn>(");
-            textWriter.WriteLine($"    IVisitor<{visitableTypeName}, TReturn> visitor) =>");
-            textWriter.WriteLine("    visitor.Visit(this);");
-            
+            if (isBaseInterface)
+            {
+                textWriter.WriteLine("[ExcludeFromCodeCoverage]");
+                textWriter.WriteLine("public TReturn Accept<TReturn>(");
+                textWriter.WriteLine($"    IVisitor<{baseTypeName}, TReturn> visitor)");
+                textWriter.WriteLine("{");
+                textWriter.WriteLine($"    IVisitor<{visitableTypeName}, TReturn> concreteVisitor = visitor;");
+                textWriter.WriteLine("    return Accept(concreteVisitor);");
+                textWriter.WriteLine("}");
+                textWriter.WriteLineNoTabs(string.Empty);
+                textWriter.WriteLine("[ExcludeFromCodeCoverage]");
+                textWriter.WriteLine("public TReturn Accept<TReturn>(");
+                textWriter.WriteLine($"    IVisitor<{visitableTypeName}, TReturn> visitor) =>");
+                textWriter.WriteLine("    visitor.Visit(this);");
+            }
+            else
+            {
+                textWriter.WriteLine("[ExcludeFromCodeCoverage]");
+                textWriter.WriteLine("public override TReturn Accept<TReturn>(");
+                textWriter.WriteLine($"    IVisitor<{baseTypeName}, TReturn> visitor) =>");
+                textWriter.WriteLine("    Accept(visitor);");
+                textWriter.WriteLineNoTabs(string.Empty);
+                textWriter.WriteLine("[ExcludeFromCodeCoverage]");
+                textWriter.WriteLine("public TReturn Accept<TReturn>(");
+                textWriter.WriteLine($"    IVisitor<{visitableTypeName}, TReturn> visitor) =>");
+                textWriter.WriteLine("    visitor.Visit(this);");
+            }
+
             textWriter.Indent--;
             textWriter.WriteLine("}");
             
@@ -175,6 +195,7 @@ public class AutoVisitableAttribute<T> : System.Attribute
 internal record VisitableInfo(
     TypeKind Kind,
     string BaseTypeName,
+    bool IsBaseInterface,
     string TypeName,
     string? NamespaceName,
     string? AccessModifier,
