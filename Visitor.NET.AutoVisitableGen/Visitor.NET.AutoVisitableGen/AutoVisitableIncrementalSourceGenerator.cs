@@ -70,14 +70,20 @@ public class AutoVisitableAttribute<T> : System.Attribute
         var accessModifier = context.TargetSymbol.DeclaredAccessibility.ToString().ToLower();
         
         List<ContainingTypeInfo> containingTypes = SyntaxHelper.GetContainingTypes(visitable, context.SemanticModel);
-        
+
+        var isBaseInterface = typedArgument.TypeKind is Microsoft.CodeAnalysis.TypeKind.Interface;
+        var isParentInterface =
+            (context.TargetSymbol as INamedTypeSymbol)?.BaseType?.ToDisplayString() is "object" ||
+            (context.TargetSymbol as INamedTypeSymbol)?.BaseType?.Interfaces.Contains(typedArgument, SymbolEqualityComparer.Default) != true;
+
         return new VisitableInfo(
             kind.Value,
             typedArgumentName,
-            typedArgument.TypeKind is Microsoft.CodeAnalysis.TypeKind.Interface,
+            isBaseInterface,
+            isParentInterface,
             visitableName,
             visitableNamespace,
-            accessModifier, 
+            accessModifier,
             containingTypes);
     }
 
@@ -117,7 +123,7 @@ public class AutoVisitableAttribute<T> : System.Attribute
         SourceProductionContext context,
         ImmutableArray<VisitableInfo> visitableInfos)
     {
-        foreach (var (typeKind, baseTypeName, isBaseInterface, visitableTypeName, typeNamespace, accessModifier, containingTypes) in visitableInfos)
+        foreach (var info in visitableInfos)
         {
             using StringWriter stringWriter = new StringWriter();
             using IndentedTextWriter textWriter = new IndentedTextWriter(stringWriter, "    ");
@@ -127,51 +133,51 @@ public class AutoVisitableAttribute<T> : System.Attribute
             textWriter.WriteLine("using System.Diagnostics.CodeAnalysis;");
             textWriter.WriteLine("using Visitor.NET;");
             textWriter.WriteLine();
-            if (typeNamespace != null)
+            if (info.NamespaceName != null)
             {
-                textWriter.Write($"namespace {typeNamespace};");
+                textWriter.Write($"namespace {info.NamespaceName};");
             }
             textWriter.WriteLine();
             textWriter.WriteLine();
             
             // add containing types declarations
-            foreach (ContainingTypeInfo containingType in containingTypes)
+            foreach (ContainingTypeInfo containingType in info.ContainingTypes)
             {
                 textWriter.WriteLine($"{containingType.Accessibility} partial {containingType.Keyword} {containingType.Name}");
                 textWriter.WriteLine("{");
                 textWriter.Indent++;
             }
-            textWriter.WriteLine($"{accessModifier} partial {typeKind.ToString().ToLower()} {visitableTypeName} :");
-            textWriter.WriteLine($"    IVisitable<{visitableTypeName}>");
+            textWriter.WriteLine($"{info.AccessModifier} partial {info.Kind.ToString().ToLower()} {info.TypeName} :");
+            textWriter.WriteLine($"    IVisitable<{info.TypeName}>");
             textWriter.WriteLine("{");
             textWriter.Indent++;
             
             // add implementation
-            if (isBaseInterface)
+            if (info is { IsBaseInterface: true, IsParentInterface: true })
             {
                 textWriter.WriteLine("[ExcludeFromCodeCoverage]");
                 textWriter.WriteLine("public TReturn Accept<TReturn>(");
-                textWriter.WriteLine($"    IVisitor<{baseTypeName}, TReturn> visitor)");
+                textWriter.WriteLine($"    IVisitor<{info.BaseTypeName}, TReturn> visitor)");
                 textWriter.WriteLine("{");
-                textWriter.WriteLine($"    IVisitor<{visitableTypeName}, TReturn> concreteVisitor = visitor;");
+                textWriter.WriteLine($"    IVisitor<{info.TypeName}, TReturn> concreteVisitor = visitor;");
                 textWriter.WriteLine("    return Accept(concreteVisitor);");
                 textWriter.WriteLine("}");
                 textWriter.WriteLineNoTabs(string.Empty);
                 textWriter.WriteLine("[ExcludeFromCodeCoverage]");
                 textWriter.WriteLine("public TReturn Accept<TReturn>(");
-                textWriter.WriteLine($"    IVisitor<{visitableTypeName}, TReturn> visitor) =>");
+                textWriter.WriteLine($"    IVisitor<{info.TypeName}, TReturn> visitor) =>");
                 textWriter.WriteLine("    visitor.Visit(this);");
             }
             else
             {
                 textWriter.WriteLine("[ExcludeFromCodeCoverage]");
                 textWriter.WriteLine("public override TReturn Accept<TReturn>(");
-                textWriter.WriteLine($"    IVisitor<{baseTypeName}, TReturn> visitor) =>");
+                textWriter.WriteLine($"    IVisitor<{info.BaseTypeName}, TReturn> visitor) =>");
                 textWriter.WriteLine("    Accept(visitor);");
                 textWriter.WriteLineNoTabs(string.Empty);
                 textWriter.WriteLine("[ExcludeFromCodeCoverage]");
                 textWriter.WriteLine("public TReturn Accept<TReturn>(");
-                textWriter.WriteLine($"    IVisitor<{visitableTypeName}, TReturn> visitor) =>");
+                textWriter.WriteLine($"    IVisitor<{info.TypeName}, TReturn> visitor) =>");
                 textWriter.WriteLine("    visitor.Visit(this);");
             }
 
@@ -179,7 +185,7 @@ public class AutoVisitableAttribute<T> : System.Attribute
             textWriter.WriteLine("}");
             
             // add closing braces
-            foreach (var _ in containingTypes)
+            foreach (var _ in info.ContainingTypes)
             {
                 textWriter.Indent--;
                 textWriter.WriteLine("}");
@@ -187,22 +193,7 @@ public class AutoVisitableAttribute<T> : System.Attribute
 
             var code = stringWriter.ToString();
 
-            context.AddSource($"{visitableTypeName}.g.cs", SourceText.From(code, Encoding.UTF8));
+            context.AddSource($"{info.TypeName}.g.cs", SourceText.From(code, Encoding.UTF8));
         }
     }
-}
-
-internal record VisitableInfo(
-    TypeKind Kind,
-    string BaseTypeName,
-    bool IsBaseInterface,
-    string TypeName,
-    string? NamespaceName,
-    string? AccessModifier,
-    List<ContainingTypeInfo> ContainingTypes);
-
-internal enum TypeKind
-{
-    Class,
-    Record
 }
