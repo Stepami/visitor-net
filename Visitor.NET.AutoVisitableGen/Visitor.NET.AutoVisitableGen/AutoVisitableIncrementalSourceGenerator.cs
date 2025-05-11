@@ -74,7 +74,7 @@ public class AutoVisitableAttribute<T> : System.Attribute
         var isBaseInterface = typedArgument.TypeKind is Microsoft.CodeAnalysis.TypeKind.Interface;
         var isParentInterface =
             (context.TargetSymbol as INamedTypeSymbol)?.BaseType?.ToDisplayString() is "object" ||
-            (context.TargetSymbol as INamedTypeSymbol)?.BaseType?.Interfaces.Contains(typedArgument, SymbolEqualityComparer.Default) != true;
+            (context.TargetSymbol as INamedTypeSymbol)?.BaseType?.AllInterfaces.Contains(typedArgument, SymbolEqualityComparer.Default) != true;
 
         return new VisitableInfo(
             kind.Value,

@@ -86,8 +86,10 @@ public abstract record Node : IBinaryTreeNode
     public abstract TReturn Accept<TReturn>(IVisitor<IBinaryTreeNode, TReturn> visitor);
 }
 
+public abstract record NodeNode : Node;
+
 [AutoVisitable<IBinaryTreeNode>]
-public partial record Operation(char Symbol) : Node
+public partial record Operation(char Symbol) : NodeNode
 {
 }
 ");
