@@ -7,7 +7,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <PackageId>Visitor.NET</PackageId>
         <Description>First-ever acyclic generic extensible typesafe implementation of Visitor pattern for .NET without any usage of dynamic cast</Description>
-        <Version>4.2.0</Version>
+        <Version>4.2.1</Version>
         <Authors>Stepami</Authors>
         <Company>N/A</Company>
         <Copyright>Copyright © Stepami 2024</Copyright>
@@ -18,6 +18,7 @@
         <PackageLicenseFile>LICENSE</PackageLicenseFile>
         <PackageTags>Visitor Pattern Contracts Generics Extensible CSharp Typesafe Acyclic Compile-Time</PackageTags>
         <RootNamespace>Visitor.NET</RootNamespace>
+        <PackageIcon>icon.png</PackageIcon>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -34,6 +35,7 @@
 
     <ItemGroup>
         <None Include="../LICENSE" Pack="true" Visible="false" PackagePath=""/>
+        <None Include="../icon.png" Pack="true" Visible="false" PackagePath=""/>
     </ItemGroup>
 
 </Project>
